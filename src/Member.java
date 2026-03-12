@@ -2,7 +2,7 @@
 public class Member {
 	public String name;
 	public String id;
-	public int memberType; // Se nedan
+	public int memberType;
 	/*
 	 * 1. Undergraduate student
 	 * 2. Postgraduate student
