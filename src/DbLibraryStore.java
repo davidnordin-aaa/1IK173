@@ -4,6 +4,7 @@ public class DbLibraryStore implements ILibraryStore {
 	@Override
 	public void addBook(Book newBook) {
 		// SQL code here dwadfaw
+		// Testkommentar
 	}
 
 	@Override
