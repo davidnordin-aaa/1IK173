@@ -1,7 +1,12 @@
 
 public class Member {
-	public String firstName;
-	public String id;
-	// 1 = student, 2 = teacher and so on.
-	public int level;
+	public String name;
+	public String id; // Se nedan
+	/*
+	* 1. Undergraduate student
+	* 2. Postgraduate student
+	* 3. PhD student
+	* 4. Teacher
+	 */
+	public int memberType;
 }
