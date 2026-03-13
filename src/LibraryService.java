@@ -32,8 +32,9 @@ public class LibraryService {
 		return status;
 	}
 	public boolean isBorrowed(Book book){
-		if(book.borrowed)
-
-		return true;
+		if(book.isAvailable){
+			return true;
+		}
+		return false;
 	}
 }
