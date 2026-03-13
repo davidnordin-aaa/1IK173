@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class Member {
 	public String Name;
@@ -6,6 +7,7 @@ public class Member {
 	public int Ssn;
 	public int DelayedReturnsCounter;
 	public int SuspensionCounter;
+	public ArrayList<String> BorrowedItems;
 	public boolean IsSuspended;
 	/*
 	memberType:
@@ -15,13 +17,14 @@ public class Member {
 	 * 4. Teacher
 	 */
 
-	public Member(String name, String id, int memberType, int ssn, int delayedReturnsCounter, int susppensionCounter, boolean isSuspended) {
+	public Member(String name, String id, int memberType, int ssn, int delayedReturnsCounter, int suspensionCounter,ArrayList<String> borrowedItems, boolean isSuspended) {
 		this.Name = name;
 		this.Id = id;
 		this.MemberType = memberType;
 		this.Ssn = ssn;
 		this.DelayedReturnsCounter = delayedReturnsCounter;
-		this.SuspensionCounter = susppensionCounter;
+		this.SuspensionCounter = suspensionCounter;
+		this.BorrowedItems = borrowedItems;
 		this.IsSuspended = isSuspended;
 	}
 
@@ -59,6 +62,14 @@ public class Member {
 
 	public void setSuspensionCounter(int suspensionCounter) {
 		SuspensionCounter = suspensionCounter;
+	}
+
+	public ArrayList<String> getBorrowedItems() {
+		return BorrowedItems;
+	}
+
+	public void setBorrowedItems(ArrayList<String> borrowedItems) {
+		BorrowedItems = borrowedItems;
 	}
 
 	public boolean isSuspended() {
