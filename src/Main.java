@@ -14,10 +14,56 @@ public class Main {
 		LibraryService svc = new LibraryService(store);
 		Scanner scanner = new Scanner(System.in);
 
-		System.out.println("Welcome to the Library System!");
-		System.out.println("Enter your user id:");
-		String userId = scanner.nextLine();
 
+		// Välkomstmeddelande
+		System.out.println(
+				"-----------------------------------------"
+				+ "\n   ===Welcome to the Library System==="
+				+ "\n-----------------------------------------"
+				+ "\nWho are you or what would you want to do?"
+				+ "\n1. Student"
+				+ "\n2. Librarian"
+				+ "\n3. Not a member *register*");
+		System.out.print("\n[Input your choice here]: ");
+		int initChoice = scanner.nextInt();
+
+		if(initChoice == 1) { // Student
+			/*
+			* Be användare välja på vilken nivå den studerar (de får låna olika många böcker)
+			* Lista saker som specifik student kan göra
+			 */
+			System.out.println("Något ska hända här");
+
+		} if(initChoice == 2) { // Bibliotekarie
+			// Lista saker som bibliotekarie kan göra
+			System.out.println("Något ska hända här");
+
+		} if(initChoice == 3) { // Registrera som ny medlem
+			// Kalla på metod för att registrera ny låntagare (tolka att det är personen själv som gör det)
+			System.out.println("Något ska hända här");
+		}
+
+
+
+
+
+
+
+
+
+		//System.out.print("Enter your user id: ");
+		//String userId = scanner.nextLine();
+		/*
+		System.out.println("------------------------------------------------------------"
+				+ "\nPlease select an option from the menu below:"
+				+ "\n------------------------------------------------------------\n[Menu list]"
+				+ "\n1. "
+				+ "\n2. "
+				+ "\n3. "
+				+ "\n4.");
+		 */
+
+		/*
 		boolean done = false;
 		int selection = 0;
 		while (!done) {			
@@ -74,5 +120,7 @@ public class Main {
 
 
 		System.out.println("Bye.");
+		 */
 	}
+
 }
