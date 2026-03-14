@@ -122,7 +122,7 @@ public class Main {
 
 			// 3. Test retrieving member
 			Member retrieved = store.getMember("4128");
-			System.out.println("Retrieved Member: " + retrieved.getFirstName() + retrieved.getLastName());
+			System.out.println("Retrieved Member: " + retrieved.getFirstName() + " " + retrieved.getLastName());
 
 			// 4. Test suspension logic
 			store.suspendMember("4128");

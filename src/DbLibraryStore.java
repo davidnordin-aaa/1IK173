@@ -134,7 +134,6 @@ public class DbLibraryStore implements ILibraryStore {
 	@Override
 	public Member getMember(String id) {
 		String sql = "SELECT * FROM Members WHERE id = ?";
-		Member member = new Member();
 
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -143,6 +142,7 @@ public class DbLibraryStore implements ILibraryStore {
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next()) {
+				Member member = new Member();
 				member.Id = rs.getInt("id");
 				member.MemberType = rs.getInt("member_type");
 				member.Ssn = rs.getInt("ssn");
@@ -152,11 +152,12 @@ public class DbLibraryStore implements ILibraryStore {
 				member.SuspensionEndDate = rs.getDate("suspension_end_date");
 				member.FirstName = rs.getString("first_name");
 				member.LastName = rs.getString("last_name");
+				return member;
 			}
 		} catch (SQLException e) {
 			//logger.error("Error retrieving member {}: {}", id, e.getMessage());
 		}
-		return member;
+		return null;
 	}
 
 	public boolean canMemberBorrow(String memberId) {

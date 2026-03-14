@@ -1,19 +1,24 @@
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
+import java.util.Date;
 
 public class DbLibraryStoreTest {
     private DbLibraryStore store;
 /*
-    public IPurchaseStore ps;
+    public FileLibraryStore fls;
     public PurchaseManager cut;
 
     @BeforeEach
     public void setUp() {
-        ps = mock(IPurchaseStore.class);
+        fls = mock(FileLibraryStore.class);
         cut = new PurchaseManager(ps);
     }
-
  */
+
     @BeforeEach
     void setUp() {
         store = new DbLibraryStore();
@@ -43,16 +48,16 @@ public class DbLibraryStoreTest {
 
         // Act: Suspend the member once
         store.suspendMember(memberId);
-
-        // Assert: Check status
         assertTrue(store.isSuspendedMember(memberId));
 
-        // Act: Suspend three times total (should trigger deletion)
+        // Act: Suspend total of three times (triggers deletion)
         store.suspendMember(memberId);
         store.suspendMember(memberId);
 
-        // Assert: Member should be removed from the database
+        // Assert: The member record should no longer exist in the database
         Member deletedMember = store.getMember(memberId);
-        assertNull(deletedMember.Id); // Check if the returned object is empty
+
+        // Check if the entire object is null
+        assertNull(deletedMember, "Should be null after being deleted for excessive suspensions.");
     }
 }
