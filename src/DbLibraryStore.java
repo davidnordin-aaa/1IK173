@@ -298,14 +298,15 @@ public class DbLibraryStore implements ILibraryStore {
 			if (rs.next()) {
 				Member member = new Member();
 				member.Id = rs.getInt("id");
+				member.FirstName = rs.getString("first_name");
+				member.LastName = rs.getString("last_name");
 				member.MemberType = rs.getInt("member_type");
 				member.Ssn = rs.getInt("ssn");
 				member.DelayedReturnsCounter = rs.getInt("delayed_returns_counter");
 				member.SuspensionCounter = rs.getInt("suspension_counter");
 				member.IsSuspended = rs.getBoolean("is_suspended");
 				member.SuspensionEndDate = rs.getDate("suspension_end_date");
-				member.FirstName = rs.getString("first_name");
-				member.LastName = rs.getString("last_name");
+
 				return member;
 			}
 		} catch (SQLException e) {

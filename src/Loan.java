@@ -1,57 +1,57 @@
 import java.util.Date;
 
 public class Loan {
-    int LoanId;
-    int MemberId;
-    int CopyId;
-    Date LoanDate;
-    Date DueDate;
+    public int LoanId;
+    public int MemberId;
+    public int CopyId;
+    public Date LoanDate;
+    public Date DueDate;
 
     public Loan(int loanId, int memberId, int copyId, Date loanDate, Date dueDate) {
-        LoanId = loanId;
-        MemberId = memberId;
-        CopyId = copyId;
-        LoanDate = loanDate;
-        DueDate = dueDate;
+        this.LoanId = loanId;
+        this.MemberId = memberId;
+        this.CopyId = copyId;
+        this.LoanDate = loanDate;
+        this.DueDate = dueDate;
     }
 
     public int getLoanId() {
-        return LoanId;
+        return this.LoanId;
     }
 
     public void setLoanId(int loanId) {
-        LoanId = loanId;
+        this.LoanId = loanId;
     }
 
     public Date getDueDate() {
-        return DueDate;
+        return this.DueDate;
     }
 
     public void setDueDate(Date dueDate) {
-        DueDate = dueDate;
+        this.DueDate = dueDate;
     }
 
     public Date getLoanDate() {
-        return LoanDate;
+        return this.LoanDate;
     }
 
     public void setLoanDate(Date loanDate) {
-        LoanDate = loanDate;
+        this.LoanDate = loanDate;
     }
 
     public int getMemberId() {
-        return MemberId;
+        return this.MemberId;
     }
 
     public void setMemberId(int memberId) {
-        MemberId = memberId;
+        this.MemberId = memberId;
     }
 
     public int getCopyId() {
-        return CopyId;
+        return this.CopyId;
     }
 
     public void setCopyId(int copyId) {
-        CopyId = copyId;
+        this.CopyId = copyId;
     }
 }

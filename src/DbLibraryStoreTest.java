@@ -26,25 +26,31 @@ public class DbLibraryStoreTest {
     }
 
     @Test
-    void testAddAndGetMember() { //Test adding and retrieving a member
+    void testAddAndGetAndDeleteMember() { //Test adding and retrieving a member
+        String memberId = "1234";
         // Create a test member
-        Member testMember = new Member(1234, 1, 9999, 0, 0, false, null, "John", "Doe");
+        Member testMember = new Member(1234, "John", "Doe", 1, 9999, 0, 0, false, null);
 
         // Act
         store.addMember(testMember);
-        Member retrieved = store.getMember("1234");
+        Member retrieved = store.getMember(memberId);
 
         // Assert
         assertNotNull(retrieved);
         assertEquals("John", retrieved.getFirstName());
         assertEquals("Doe", retrieved.getLastName());
         assertEquals(9999, retrieved.getSsn());
+
+        //test deletion
+        store.removeMember(memberId);
+        Member deletedMember = store.getMember(memberId);
+        assertNull(deletedMember, "Should be null after being deleted for excessive suspensions.");
     }
 
     @Test
     void testSuspendMember() { // Test member suspension logic
         String memberId = "1642";
-        store.addMember(new Member(1642, 1, 8888, 0, 0, false, null, "Jane", "Doe"));
+        store.addMember(new Member(1642, "Jane", "Doe", 1, 8888, 0, 0, false, null));
 
         // Suspend the member once
         store.suspendMember(memberId);

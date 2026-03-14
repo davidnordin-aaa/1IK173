@@ -1,12 +1,12 @@
 public class LibraryItem {
-    int CopyID;
-    int ISBN;
-    boolean IsAvailable;
+    public int CopyID;
+    public int ISBN;
+    public boolean IsAvailable;
 
     public LibraryItem(int copyID, int ISBN, boolean isAvailable) {
-        CopyID = copyID;
+        this.CopyID = copyID;
         this.ISBN = ISBN;
-        IsAvailable = isAvailable;
+        this.IsAvailable = isAvailable;
     }
 
     public boolean isAvailable() {
