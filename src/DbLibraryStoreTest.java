@@ -3,7 +3,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DbLibraryStoreTest {
     private DbLibraryStore store;
+/*
+    public IPurchaseStore ps;
+    public PurchaseManager cut;
 
+    @BeforeEach
+    public void setUp() {
+        ps = mock(IPurchaseStore.class);
+        cut = new PurchaseManager(ps);
+    }
+
+ */
     @BeforeEach
     void setUp() {
         store = new DbLibraryStore();
@@ -13,7 +23,7 @@ public class DbLibraryStoreTest {
     @Test
     void testAddAndGetMember() { //Test adding and retrieving a member
         // Create a test member
-        Member testMember = new Member("John Doe", 1234, 1, 9999, 0, 0, false, null);
+        Member testMember = new Member(1234, 1, 9999, 0, 0, false, null, "John", "Doe");
 
         // Act
         store.addMember(testMember);
@@ -21,14 +31,15 @@ public class DbLibraryStoreTest {
 
         // Assert
         assertNotNull(retrieved);
-        assertEquals("John Doe", retrieved.getName());
+        assertEquals("John", retrieved.getFirstName());
+        assertEquals("Doe", retrieved.getLastName());
         assertEquals(9999, retrieved.getSsn());
     }
 
     @Test
     void testSuspendMember() { // Test member suspension logic
         String memberId = "1642";
-        store.addMember(new Member("Jane Doe", 1642, 1, 8888, 0, 0, false, null));
+        store.addMember(new Member(1642, 1, 8888, 0, 0, false, null, "Jane", "Doe"));
 
         // Act: Suspend the member once
         store.suspendMember(memberId);
@@ -42,6 +53,6 @@ public class DbLibraryStoreTest {
 
         // Assert: Member should be removed from the database
         Member deletedMember = store.getMember(memberId);
-        assertNull(deletedMember.Name); // Check if the returned object is empty
+        assertNull(deletedMember.Id); // Check if the returned object is empty
     }
 }

@@ -1,7 +1,6 @@
 import java.util.Date;
 
 public class Member {
-	public String Name;
 	public int Id;
 	public int MemberType;
 	public int Ssn;
@@ -9,6 +8,8 @@ public class Member {
 	public int SuspensionCounter;
 	public boolean IsSuspended;
 	public Date SuspensionEndDate;
+	public String FirstName;
+	public String LastName;
 	/*
 	memberType:
 	 * 1. Undergraduate student
@@ -17,8 +18,7 @@ public class Member {
 	 * 4. Teacher
 	 */
 
-	public Member(String name, int id, int memberType, int ssn, int delayedReturnsCounter, int suspensionCounter, boolean isSuspended, Date suspensionEndDate) {
-		this.Name = name;
+	public Member(int id, int memberType, int ssn, int delayedReturnsCounter, int suspensionCounter, boolean isSuspended, Date suspensionEndDate, String firstName, String lastName) {
 		this.Id = id;
 		this.MemberType = memberType;
 		this.Ssn = ssn;
@@ -26,14 +26,20 @@ public class Member {
 		this.SuspensionCounter = suspensionCounter;
 		this.IsSuspended = isSuspended;
 		this.SuspensionEndDate = suspensionEndDate;
+		this.FirstName = firstName;
+		this.LastName = lastName;
 	}
 
 	public Member() { //tillfällig, tas bort sen
 
 	}
 
-	public String getName() {
-		return Name;
+	public String getFirstName() {
+		return FirstName;
+	}
+
+	public String getLastName() {
+		return LastName;
 	}
 
 	public int getId() {
