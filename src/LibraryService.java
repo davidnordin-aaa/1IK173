@@ -26,15 +26,14 @@ public class LibraryService {
 			System.out.println("We couldnt find that book, please double check your search.");
 			Main.main(null);
 		}
-		if (isBorrowed(book) == true){
+		/*
+		if (isAvailable(book) == true){
 			System.out.println("That book was available and it is now borrowed on your account");
 		}
+		 */
 		return status;
-	}
-	public boolean isBorrowed(Book book){
-		if(book.isAvailable){
-			return true;
-		}
-		return false;
+
+
+
 	}
 }
