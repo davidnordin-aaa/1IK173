@@ -255,7 +255,7 @@ public class DbLibraryStore implements ILibraryStore {
 				pstmt.executeUpdate();
 			}
 
-			// Check for deletion requirement [cite: 32]
+			// Check for deletion requirement
 			Member m = getMember(id);
 			if (m.SuspensionCounter > 2) {
 				//logger.warn("Member {} exceeded 2 suspensions. Deleting account.", id);
