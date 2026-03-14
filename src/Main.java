@@ -1,14 +1,9 @@
 import java.util.Date;
 import java.util.Scanner;
 
-/*
- * NOTE!
- * This project is an incomplete skeleton!!!
- */
-
 public class Main {
 
-	public static void main(String[] args) { // main
+	public static void main(String[] args) {
 
 		//ILibraryStore store = new FileLibraryStore("myfilename.txt");
 		ILibraryStore store = new DbLibraryStore();
