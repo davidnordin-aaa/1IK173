@@ -354,12 +354,12 @@ public class Main {
 			dbstore.initializeData();
 
 			// 2. Test adding member
-			Member testMember = new Member("Alice Smith", 4128, 1, 12345678, 0, 0, false, null);
+			Member testMember = new Member(4128, 1, 12345678, 0, 0, false, null, "Alice", "Smith");
 			store.addMember(testMember);
 
 			// 3. Test retrieving member
 			Member retrieved = store.getMember("4128");
-			System.out.println("Retrieved Member: " + retrieved.getName());
+			System.out.println("Retrieved Member: " + retrieved.getFirstName() + retrieved.getLastName());
 
 			// 4. Test suspension logic
 			store.suspendMember("4128");

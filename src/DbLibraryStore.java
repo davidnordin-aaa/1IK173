@@ -1,27 +1,37 @@
 import java.sql.*;
+import java.time.LocalDate;
+/*
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+ */
 
 public class DbLibraryStore implements ILibraryStore {
 
+	//private static final Logger logger = LogManager.getLogger(DbLibraryStore.class)
 	private static final String DB_URL = "jdbc:h2:./test;AUTO_SERVER=TRUE";
 	private static final String USER = "sa";
 	private static final String PASS = "";
 
 	private Connection connect() throws SQLException {
-		try {
-			Class.forName("org.h2.Driver"); // Force the JVM to load the H2 driver class
-		} catch (ClassNotFoundException e) {
-			System.out.println("H2 Driver not found in Classpath: " + e.getMessage());
-		}
 		return DriverManager.getConnection(DB_URL, USER, PASS);
 	}
 
 	public void initializeData() { //use this method when starting program
-		String checkSql = "SELECT COUNT(*) FROM books";
-		try (Connection conn = this.connect();
-			 Statement stmt = conn.createStatement();
-			 ResultSet rs = stmt.executeQuery(checkSql)) {
+		try (Connection conn = this.connect(); Statement stmt = conn.createStatement()) {
+			// Ensure table exists with correct columns
+			stmt.execute("CREATE TABLE IF NOT EXISTS MEMBERS (" +
+					"ID VARCHAR(4) PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), " +
+					"MEMBER_TYPE INTEGER, SSN BIGINT UNIQUE, DELAYED_RETURNS_COUNTER INTEGER DEFAULT 0, " +
+					"SUSPENSION_COUNTER INTEGER DEFAULT 0, IS_SUSPENDED BOOLEAN DEFAULT FALSE, " +
+					"SUSPENSION_END_DATE DATE)");
 
-			if (rs.next() && rs.getInt(1) == 0) { //manually insert 10 books
+			stmt.execute("CREATE TABLE IF NOT EXISTS BOOKS (" +
+					"ISBN INTEGER PRIMARY KEY, TITLE VARCHAR(255), AUTHOR VARCHAR(255), PUBLICATIONYEAR INTEGER)");
+
+			// Check if books need to be seeded
+			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM BOOKS");
+			if (rs.next() && rs.getInt(1) == 0) {
+				//logger.info("Seeding initial book data...");
 				stmt.execute("INSERT INTO books VALUES (238103, 'The Witcher - The Last Wish', 'Andrzej Sapkowski', 1993)");
 				stmt.execute("INSERT INTO books VALUES (102938, '1984', 'George Orwell', 1949)");
 				stmt.execute("INSERT INTO books VALUES (146123, 'The Hobbit', 'J.R.R. Tolkien', 1937)");
@@ -32,9 +42,32 @@ public class DbLibraryStore implements ILibraryStore {
 				stmt.execute("INSERT INTO books VALUES (731246, 'And Then There Were None', 'Agatha Christie', 1939)");
 				stmt.execute("INSERT INTO books VALUES (572359, 'Manufacturing Consent', 'Edward S. Herman, Noam Chomsky', 1988)");
 				stmt.execute("INSERT INTO books VALUES (832575, 'A Game of Thrones', 'George R. R. Martin', 1996)");
+
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (238103, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (238103, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (102938, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (102938, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (146123, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (146123, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (174213, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (174213, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (754247, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (754247, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (102938, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (102938, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (352783, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (352783, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (114267, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (114267, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (731246, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (731246, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (572359, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (572359, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (832575, TRUE)");
+				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (832575, TRUE)");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//logger.error("Database initialization failed: {}", e.getMessage());
 		}
 	}
 
@@ -49,37 +82,30 @@ public class DbLibraryStore implements ILibraryStore {
 			pstmt.setString(2, newBook.title);
 			pstmt.setString(3, newBook.author);
 			pstmt.setInt(4, newBook.year);
-
 			pstmt.executeUpdate();
-			System.out.println("Title registered successfully.");
+			//logger.info("Title '{}' added to database.", newBook.title);
 		} catch (SQLException e) {
-			System.out.println("Database error: " + e.getMessage());
+			//logger.error("Failed to add book {}: {}", newBook.ISBN, e.getMessage());
 		}
 	}
 
 	@Override
 	public void addMember(Member newMember) {
-		String sql = "INSERT INTO Members (id, name, member_type, ssn, delayed_returns_counter, suspension_counter," +
-				"is_suspended, suspension_end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN) VALUES (?, ?, ?, ?, ?)";
 
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-			pstmt.setInt(1, newMember.Id);
-			pstmt.setString(2, newMember.Name);
-			pstmt.setInt(3, newMember.MemberType);
-			pstmt.setInt(4, newMember.Ssn);
-			pstmt.setInt(5, newMember.DelayedReturnsCounter);
-			pstmt.setInt(6, newMember.SuspensionCounter);
-			pstmt.setBoolean(7, newMember.isSuspended());
-			pstmt.setDate(8, (Date) newMember.SuspensionEndDate);
-
+			pstmt.setString(1, String.valueOf(newMember.Id));
+			pstmt.setString(2, newMember.FirstName);
+			pstmt.setString(3, newMember.LastName);
+			pstmt.setInt(4, newMember.MemberType);
+			pstmt.setLong(5, newMember.Ssn); // Using Long to prevent SSN overflow
 			pstmt.executeUpdate();
-			System.out.println("Member registered successfully.");
+			//logger.info("Member {} registered successfully.", newMember.Id);
 		} catch (SQLException e) {
 			System.out.println("Database error: " + e.getMessage());
 		}
-
 	}
 
 	@Override
@@ -100,9 +126,8 @@ public class DbLibraryStore implements ILibraryStore {
 				book.ISBN = rs.getInt("isbn");
 			}
 		} catch (SQLException e) {
-			System.out.println("Error retrieving book: " + e.getMessage());
+			//logger.error("Error retrieving book {}: {}", isbn, e.getMessage());
 		}
-		System.out.println("DbLibraryStore::getBook()");
 		return book;
 	}
 
@@ -119,27 +144,51 @@ public class DbLibraryStore implements ILibraryStore {
 
 			if (rs.next()) {
 				member.Id = rs.getInt("id");
-				member.Name = rs.getString("name");
 				member.MemberType = rs.getInt("member_type");
 				member.Ssn = rs.getInt("ssn");
 				member.DelayedReturnsCounter = rs.getInt("delayed_returns_counter");
 				member.SuspensionCounter = rs.getInt("suspension_counter");
 				member.IsSuspended = rs.getBoolean("is_suspended");
 				member.SuspensionEndDate = rs.getDate("suspension_end_date");
+				member.FirstName = rs.getString("first_name");
+				member.LastName = rs.getString("last_name");
 			}
 		} catch (SQLException e) {
-			System.out.println("Error retrieving member: " + e.getMessage());
+			//logger.error("Error retrieving member {}: {}", id, e.getMessage());
 		}
-
-		System.out.println("DbLibraryStore::getMember()");
 		return member;
+	}
+
+	public boolean canMemberBorrow(String memberId) {
+		String sql = "SELECT m.MEMBER_TYPE, COUNT(l.LOAN_ID) as active_loans " +
+				"FROM MEMBERS m LEFT JOIN LOANS l ON m.ID = l.MEMBER_ID " +
+				"WHERE m.ID = ? GROUP BY m.MEMBER_TYPE";
+		try (Connection conn = this.connect();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, memberId);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				int type = rs.getInt("MEMBER_TYPE");
+				int currentLoans = rs.getInt("active_loans");
+
+				// Enforce limits: Undergrad (3), Master (5), PhD (7), Teacher (10) [cite: 27]
+				return switch (type) {
+					case 1 -> currentLoans < 3;  // Undergraduate
+					case 2 -> currentLoans < 5;  // Postgraduate
+					case 3 -> currentLoans < 7;  // PhD
+					case 4 -> currentLoans < 10; // Teacher
+					default -> false;
+				};
+			}
+		} catch (SQLException e) {
+			//logger.error("Error checking borrowing limits: {}", e.getMessage());
+		}
+		return false;
 	}
 
 	@Override
 	public boolean isSuspendedMember(String id) {
-		String sql = "SELECT is_suspended FROM Members WHERE id = ?";
-		boolean suspended = false;
-
+		String sql = "SELECT is_suspended, suspension_end_date FROM MEMBERS WHERE id = ?";
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -147,64 +196,74 @@ public class DbLibraryStore implements ILibraryStore {
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next()) {
-				suspended = rs.getBoolean("is_suspended");
+				boolean isSuspended = rs.getBoolean("is_suspended");
+				Date endDate = rs.getDate("suspension_end_date");
+
+				if (isSuspended && endDate != null && endDate.before(Date.valueOf(LocalDate.now()))) {
+					updateSuspensionStatus(id, false, null);
+					return false;
+				}
+				return isSuspended;
 			}
 		} catch (SQLException e) {
-			System.out.println("Error retrieving suspension status: " + e.getMessage());
+			//logger.error("Error checking suspension for {}: {}", id, e.getMessage());
 		}
-		return suspended;
+		return false;
+	}
+
+	private void updateSuspensionStatus(String id, boolean status, LocalDate endDate) {
+		String sql = "UPDATE MEMBERS SET is_suspended = ?, suspension_end_date = ? WHERE id = ?";
+		try (Connection conn = this.connect();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setBoolean(1, status);
+			pstmt.setDate(2, endDate != null ? Date.valueOf(endDate) : null);
+			pstmt.setString(3, id);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			//logger.error("Failed to update suspension status for {}: {}", id, e.getMessage());
+		}
 	}
 
 	@Override
 	public void removeMember(String id) {
-		String sql = "DELETE FROM Members WHERE id = ?";
-
+		String sql = "DELETE FROM MEMBERS WHERE id = ?";
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-			pstmt.setInt(1, Integer.parseInt(id));
+			pstmt.setString(1, id);
 			int affectedRows = pstmt.executeUpdate();
-
-			if (affectedRows > 0) {// The member code is now "released" for future use
-				System.out.println("Member " + id + " has been removed from the system.");
+			if (affectedRows > 0) {
+				//logger.info("Account for member {} has been deleted.", id);
 			}
 		} catch (SQLException e) {
-			System.out.println("Error removing member: " + e.getMessage());
+			//logger.error("Error removing member {}: {}", id, e.getMessage());
 		}
 	}
 
 	@Override
 	public void suspendMember(String id) {
-		// First, increment the suspension counter and set status to active
-		String updateSql = "UPDATE Members SET is_suspended = TRUE, suspension_counter = suspension_counter + 1 WHERE id = ?";
-		// Check if the member has exceeded the suspension limit
-		String checkSql = "SELECT suspension_counter FROM Members WHERE id = ?";
+		String updateSql = "UPDATE MEMBERS SET IS_SUSPENDED = TRUE, " +
+				"SUSPENSION_COUNTER = SUSPENSION_COUNTER + 1, " +
+				"SUSPENSION_END_DATE = ? WHERE ID = ?";
 
-		try (Connection conn = this.connect();
-			 PreparedStatement pstmtUpdate = conn.prepareStatement(updateSql);
-			 PreparedStatement pstmtCheck = conn.prepareStatement(checkSql)) {
+		try (Connection conn = this.connect()) {
+			LocalDate endDate = LocalDate.now().plusDays(15);
+			try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
+				pstmt.setDate(1, Date.valueOf(endDate));
+				pstmt.setString(2, id);
+				pstmt.executeUpdate();
+			}
 
-			int memberId = Integer.parseInt(id);
-
-			// Apply the 15-day suspension
-			pstmtUpdate.setInt(1, memberId);
-			pstmtUpdate.executeUpdate();
-
-			// Check if they have been suspended more than twice
-			pstmtCheck.setInt(1, memberId);
-			ResultSet rs = pstmtCheck.executeQuery();
-
-			if (rs.next()) {
-				int count = rs.getInt("suspension_counter");
-				if (count > 2) {
-					System.out.println("Member has been suspended more than twice. Deleting account...");
-					removeMember(id);
-				} else {
-					System.out.println("Member " + id + " is now suspended for 15 days.");
-				}
+			// Check for deletion requirement [cite: 32]
+			Member m = getMember(id);
+			if (m.SuspensionCounter > 2) {
+				//logger.warn("Member {} exceeded 2 suspensions. Deleting account.", id);
+				removeMember(id);
+			} else {
+				//logger.info("Member {} suspended until {}", id, endDate);
 			}
 		} catch (SQLException e) {
-			System.out.println("Error processing suspension: " + e.getMessage());
+			//logger.error("Suspension logic failed: {}", e.getMessage());
 		}
 	}
 }
