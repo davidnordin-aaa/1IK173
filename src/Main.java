@@ -303,7 +303,7 @@ public class Main {
 			System.out.print("\n[Input your choice here]: ");
 			int librarianChoice = scanner.nextInt();
 
-			switch(librarianChoice) {
+			switch(librarianChoice) { // test
 				case 1 :
 					/*
 					* Fyller i ansökan med förnamn, efternamn och personnummer
