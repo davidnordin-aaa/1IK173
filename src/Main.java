@@ -15,32 +15,81 @@ public class Main {
 		Scanner scanner = new Scanner(System.in);
 
 
-		// Välkomstmeddelande
+		// Välkomstmeddelande + meny
 		System.out.println(
 				"-----------------------------------------"
 				+ "\n   ===Welcome to the Library System==="
 				+ "\n-----------------------------------------"
 				+ "\nWho are you or what would you want to do?"
 				+ "\n1. Student"
-				+ "\n2. Librarian"
-				+ "\n3. Not a member *register*");
-		System.out.print("\n[Input your choice here]: ");
-		int initChoice = scanner.nextInt();
+				+ "\n2. Teacher"
+				+ "\n3. Librarian"
+				+ "\n4. Not a member *register*");
 
-		if(initChoice == 1) { // Student
+		System.out.print("[Input your choice here]: ");
+		//int initChoice = scanner.nextInt();
+		int initChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
+
+		if(initChoice == 1) {
 			/*
-			* Be användare välja på vilken nivå den studerar (de får låna olika många böcker)
-			* Lista saker som specifik student kan göra
+			 * Be användare välja på vilken nivå den studerar (de får låna olika många böcker)
+			 * Lista saker som specifik student kan göra
+			 * Använd switch
 			 */
-			System.out.println("Något ska hända här");
 
-		} if(initChoice == 2) { // Bibliotekarie
+			// Menu list title
+			System.out.println(
+					"\n----------------------------------------------"
+					+ "\nSelect from the list what would you like to do"
+					+ "\n----------------------------------------------");
+
+			// Menu list content
+			System.out.println(
+					"1. Lend book"
+					+ "\n2. Return book");
+
+			System.out.print("[Input your choice here]: ");
+			//int studentChoice = scanner.nextInt();
+			int studentChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
+
+			// Switch (student actions)====================================================================
+			switch(studentChoice) {
+				// Lend book
+				case 1 :
+					System.out.print(
+							"\n---------------------------------"
+							+ "\nWhat book would you like to lend?"
+							+ "\n---------------------------------"
+							+ "\n[Type here]: ");
+					//String bookTitleToLend = scanner.next();
+					String bookTitleToLend = scanner.nextLine();
+
+					System.out.println("\nLibrarian: Okay, so you want to lend " + "'" + bookTitleToLend + "'");
+					System.out.println("Librarian: Please provide me with your ID"
+					+ "\n------------------------------------------");
+
+					System.out.print("[Input ID here]: ");
+					int studentId = scanner.nextInt();
+
+					// Kolla typ av medlem
+					break;
+
+				// Return book
+				case 2 :
+					System.out.println("Return book");
+					break;
+			}
+
+		} if(initChoice == 2) { // Teacher
 			// Lista saker som bibliotekarie kan göra
-			System.out.println("Något ska hända här");
+			System.out.println("You're a teacher");
 
-		} if(initChoice == 3) { // Registrera som ny medlem
+		} if(initChoice == 3) { // Librarian
+			System.out.println("You're a librarian");
+
+		} if(initChoice == 4) { // Register new member
+			System.out.println("You want to register");
 			// Kalla på metod för att registrera ny låntagare (tolka att det är personen själv som gör det)
-			System.out.println("Något ska hända här");
 		}
 
 
