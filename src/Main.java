@@ -8,14 +8,13 @@ import java.util.Scanner;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) { // main
 
 		//ILibraryStore store = new FileLibraryStore("myfilename.txt");
 		ILibraryStore store = new DbLibraryStore();
 		LibraryService svc = new LibraryService(store);
 		DbLibraryStore DB = new DbLibraryStore();
 		Scanner scanner = new Scanner(System.in);
-
 
 		// Välkomstmeddelande + meny
 		System.out.println(
