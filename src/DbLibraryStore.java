@@ -18,7 +18,7 @@ public class DbLibraryStore implements ILibraryStore {
 
 	public void initializeData() { //use this method when starting program
 		try (Connection conn = this.connect(); Statement stmt = conn.createStatement()) {
-			// Ensure table exists with correct columns
+			// Ensure tables exists
 			stmt.execute("CREATE TABLE IF NOT EXISTS MEMBERS (" +
 					"ID VARCHAR(4) PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), " +
 					"MEMBER_TYPE INTEGER, SSN BIGINT UNIQUE, DELAYED_RETURNS_COUNTER INTEGER DEFAULT 0, " +
@@ -27,6 +27,19 @@ public class DbLibraryStore implements ILibraryStore {
 
 			stmt.execute("CREATE TABLE IF NOT EXISTS BOOKS (" +
 					"ISBN INTEGER PRIMARY KEY, TITLE VARCHAR(255), AUTHOR VARCHAR(255), PUBLICATIONYEAR INTEGER)");
+
+			// New table creations based on the provided H2 schema
+			stmt.execute("CREATE TABLE IF NOT EXISTS LIBRARYITEMS (" +
+					"COPY_ID BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+					"ISBN INTEGER REFERENCES BOOKS(ISBN), " +
+					"IS_AVAILABLE BOOLEAN DEFAULT TRUE)");
+
+			stmt.execute("CREATE TABLE IF NOT EXISTS LOANS (" +
+					"LOAN_ID BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+					"MEMBER_ID VARCHAR(4) REFERENCES MEMBERS(ID), " +
+					"COPY_ID BIGINT REFERENCES LIBRARYITEMS(COPY_ID), " +
+					"LOAN_DATE DATE, " +
+					"DUE_DATE DATE)");
 
 			// Check if books need to be seeded
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM BOOKS");
@@ -68,6 +81,147 @@ public class DbLibraryStore implements ILibraryStore {
 			}
 		} catch (SQLException e) {
 			//logger.error("Database initialization failed: {}", e.getMessage());
+		}
+	}
+
+	public boolean lendItem(String memberId, int isbn) {
+		String findItemSql = "SELECT COPY_ID FROM LIBRARYITEMS WHERE ISBN = ? AND IS_AVAILABLE = TRUE LIMIT 1";
+		String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";
+		String insertLoanSql = "INSERT INTO LOANS (MEMBER_ID, COPY_ID, LOAN_DATE, DUE_DATE) VALUES (?, ?, ?, ?)";
+
+		try (Connection conn = this.connect()) {
+			conn.setAutoCommit(false); // Start transaction
+
+			try (PreparedStatement findStmt = conn.prepareStatement(findItemSql)) {
+				findStmt.setInt(1, isbn);
+				ResultSet rs = findStmt.executeQuery();
+
+				if (rs.next()) {
+					long copyId = rs.getLong("COPY_ID");
+
+					// Mark item as unavailable
+					try (PreparedStatement updateStmt = conn.prepareStatement(updateItemSql)) {
+						updateStmt.setLong(1, copyId);
+						updateStmt.executeUpdate();
+					}
+
+					// Create loan record
+					try (PreparedStatement insertStmt = conn.prepareStatement(insertLoanSql)) {
+						insertStmt.setString(1, memberId);
+						insertStmt.setLong(2, copyId);
+						insertStmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+						insertStmt.setDate(4, java.sql.Date.valueOf(LocalDate.now().plusDays(15)));
+						insertStmt.executeUpdate();
+					}
+
+					conn.commit(); // Commit transaction
+					return true;
+				}
+			} catch (SQLException e) {
+				conn.rollback(); // Rollback if any step fails
+				System.out.println("Transaction failed, rolling back: " + e.getMessage());
+			} finally {
+				conn.setAutoCommit(true);
+			}
+		} catch (SQLException e) {
+			System.out.println("Database error during lending: " + e.getMessage());
+		}
+		return false; // Item not available or error occurred
+	}
+
+	public boolean returnItem(String memberId, int isbn) {
+		String findLoanSql = "SELECT l.LOAN_ID, l.COPY_ID, l.DUE_DATE FROM LOANS l " +
+				"JOIN LIBRARYITEMS i ON l.COPY_ID = i.COPY_ID " +
+				"WHERE l.MEMBER_ID = ? AND i.ISBN = ? LIMIT 1";
+		String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = TRUE WHERE COPY_ID = ?";
+		String deleteLoanSql = "DELETE FROM LOANS WHERE LOAN_ID = ?";
+		String updateDelaySql = "UPDATE MEMBERS SET DELAYED_RETURNS_COUNTER = DELAYED_RETURNS_COUNTER + 1 WHERE ID = ?";
+
+		try (Connection conn = this.connect()) {
+			conn.setAutoCommit(false); // Start transaction
+
+			try (PreparedStatement findStmt = conn.prepareStatement(findLoanSql)) {
+				findStmt.setString(1, memberId);
+				findStmt.setInt(2, isbn);
+				ResultSet rs = findStmt.executeQuery();
+
+				if (rs.next()) {
+					long loanId = rs.getLong("LOAN_ID");
+					long copyId = rs.getLong("COPY_ID");
+					java.sql.Date dueDate = rs.getDate("DUE_DATE");
+
+					// Check for delayed return
+					if (java.sql.Date.valueOf(LocalDate.now()).after(dueDate)) {
+						try (PreparedStatement delayStmt = conn.prepareStatement(updateDelaySql)) {
+							delayStmt.setString(1, memberId);
+							delayStmt.executeUpdate();
+						}
+					}
+
+					// Mark item as available
+					try (PreparedStatement updateStmt = conn.prepareStatement(updateItemSql)) {
+						updateStmt.setLong(1, copyId);
+						updateStmt.executeUpdate();
+					}
+
+					// Delete loan record
+					try (PreparedStatement deleteStmt = conn.prepareStatement(deleteLoanSql)) {
+						deleteStmt.setLong(1, loanId);
+						deleteStmt.executeUpdate();
+					}
+
+					conn.commit(); // Commit transaction
+					return true;
+				}
+			} catch (SQLException e) {
+				conn.rollback();
+				System.out.println("Transaction failed, rolling back: " + e.getMessage());
+			} finally {
+				conn.setAutoCommit(true);
+			}
+		} catch (SQLException e) {
+			System.out.println("Database error during return: " + e.getMessage());
+		}
+		return false; // Loan record not found or error occurred
+	}
+
+	public boolean canMemberBorrow(String memberId) {
+		String sql = "SELECT m.MEMBER_TYPE, COUNT(l.LOAN_ID) as active_loans " +
+				"FROM MEMBERS m LEFT JOIN LOANS l ON m.ID = l.MEMBER_ID " +
+				"WHERE m.ID = ? GROUP BY m.MEMBER_TYPE";
+		try (Connection conn = this.connect();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, memberId);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				int type = rs.getInt("MEMBER_TYPE");
+				int currentLoans = rs.getInt("active_loans");
+
+				// Enforce limits: Undergrad (3), Master (5), PhD (7), Teacher (10) [cite: 27]
+				return switch (type) {
+					case 1 -> currentLoans < 3;  // Undergraduate
+					case 2 -> currentLoans < 5;  // Postgraduate
+					case 3 -> currentLoans < 7;  // PhD
+					case 4 -> currentLoans < 10; // Teacher
+					default -> false;
+				};
+			}
+		} catch (SQLException e) {
+			//logger.error("Error checking borrowing limits: {}", e.getMessage());
+		}
+		return false;
+	}
+
+	private void updateSuspensionStatus(String id, boolean status, LocalDate endDate) {
+		String sql = "UPDATE MEMBERS SET is_suspended = ?, suspension_end_date = ? WHERE id = ?";
+		try (Connection conn = this.connect();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setBoolean(1, status);
+			pstmt.setDate(2, endDate != null ? Date.valueOf(endDate) : null);
+			pstmt.setString(3, id);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			//logger.error("Failed to update suspension status for {}: {}", id, e.getMessage());
 		}
 	}
 
@@ -160,33 +314,6 @@ public class DbLibraryStore implements ILibraryStore {
 		return null;
 	}
 
-	public boolean canMemberBorrow(String memberId) {
-		String sql = "SELECT m.MEMBER_TYPE, COUNT(l.LOAN_ID) as active_loans " +
-				"FROM MEMBERS m LEFT JOIN LOANS l ON m.ID = l.MEMBER_ID " +
-				"WHERE m.ID = ? GROUP BY m.MEMBER_TYPE";
-		try (Connection conn = this.connect();
-			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, memberId);
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next()) {
-				int type = rs.getInt("MEMBER_TYPE");
-				int currentLoans = rs.getInt("active_loans");
-
-				// Enforce limits: Undergrad (3), Master (5), PhD (7), Teacher (10) [cite: 27]
-				return switch (type) {
-					case 1 -> currentLoans < 3;  // Undergraduate
-					case 2 -> currentLoans < 5;  // Postgraduate
-					case 3 -> currentLoans < 7;  // PhD
-					case 4 -> currentLoans < 10; // Teacher
-					default -> false;
-				};
-			}
-		} catch (SQLException e) {
-			//logger.error("Error checking borrowing limits: {}", e.getMessage());
-		}
-		return false;
-	}
-
 	@Override
 	public boolean isSuspendedMember(String id) {
 		String sql = "SELECT is_suspended, suspension_end_date FROM MEMBERS WHERE id = ?";
@@ -210,19 +337,6 @@ public class DbLibraryStore implements ILibraryStore {
 			//logger.error("Error checking suspension for {}: {}", id, e.getMessage());
 		}
 		return false;
-	}
-
-	private void updateSuspensionStatus(String id, boolean status, LocalDate endDate) {
-		String sql = "UPDATE MEMBERS SET is_suspended = ?, suspension_end_date = ? WHERE id = ?";
-		try (Connection conn = this.connect();
-			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setBoolean(1, status);
-			pstmt.setDate(2, endDate != null ? Date.valueOf(endDate) : null);
-			pstmt.setString(3, id);
-			pstmt.executeUpdate();
-		} catch (SQLException e) {
-			//logger.error("Failed to update suspension status for {}: {}", id, e.getMessage());
-		}
 	}
 
 	@Override

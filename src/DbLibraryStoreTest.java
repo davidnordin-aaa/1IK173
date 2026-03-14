@@ -46,15 +46,15 @@ public class DbLibraryStoreTest {
         String memberId = "1642";
         store.addMember(new Member(1642, 1, 8888, 0, 0, false, null, "Jane", "Doe"));
 
-        // Act: Suspend the member once
+        // Suspend the member once
         store.suspendMember(memberId);
         assertTrue(store.isSuspendedMember(memberId));
 
-        // Act: Suspend total of three times (triggers deletion)
+        //Suspend two more times, trigger deletion
         store.suspendMember(memberId);
         store.suspendMember(memberId);
 
-        // Assert: The member record should no longer exist in the database
+        //Member record should no longer exist in the database
         Member deletedMember = store.getMember(memberId);
 
         // Check if the entire object is null
