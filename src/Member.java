@@ -1,14 +1,14 @@
-import java.util.ArrayList;
+import java.util.Date;
 
 public class Member {
 	public String Name;
-	public String Id;
+	public int Id;
 	public int MemberType;
 	public int Ssn;
 	public int DelayedReturnsCounter;
 	public int SuspensionCounter;
-	public ArrayList<String> BorrowedItems;
 	public boolean IsSuspended;
+	public Date SuspensionEndDate;
 	/*
 	memberType:
 	 * 1. Undergraduate student
@@ -17,15 +17,15 @@ public class Member {
 	 * 4. Teacher
 	 */
 
-	public Member(String name, String id, int memberType, int ssn, int delayedReturnsCounter, int suspensionCounter,ArrayList<String> borrowedItems, boolean isSuspended) {
+	public Member(String name, int id, int memberType, int ssn, int delayedReturnsCounter, int suspensionCounter, boolean isSuspended, Date suspensionEndDate) {
 		this.Name = name;
 		this.Id = id;
 		this.MemberType = memberType;
 		this.Ssn = ssn;
 		this.DelayedReturnsCounter = delayedReturnsCounter;
 		this.SuspensionCounter = suspensionCounter;
-		this.BorrowedItems = borrowedItems;
 		this.IsSuspended = isSuspended;
+		this.SuspensionEndDate = suspensionEndDate;
 	}
 
 	public Member() { //tillfällig, tas bort sen
@@ -36,7 +36,7 @@ public class Member {
 		return Name;
 	}
 
-	public String getId() {
+	public int getId() {
 		return Id;
 	}
 
@@ -64,20 +64,20 @@ public class Member {
 		SuspensionCounter = suspensionCounter;
 	}
 
-	public ArrayList<String> getBorrowedItems() {
-		return BorrowedItems;
-	}
-
-	public void setBorrowedItems(ArrayList<String> borrowedItems) {
-		BorrowedItems = borrowedItems;
-	}
-
 	public boolean isSuspended() {
 		return IsSuspended;
 	}
 
 	public void setSuspended(boolean suspended) {
 		IsSuspended = suspended;
+	}
+
+	public Date getSuspensionEndDate() {
+		return SuspensionEndDate;
+	}
+
+	public void setSuspensionEndDate(Date suspensionEndDate) {
+		SuspensionEndDate = suspensionEndDate;
 	}
 }
 
