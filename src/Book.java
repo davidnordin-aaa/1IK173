@@ -5,7 +5,9 @@ public class Book {
 	public String author;
 	public int year;
 	public int ISBN;
+	/*
 	public boolean isAvailable;
 	public Date returnDate;
 	public int copyId;
+	 */
 }
