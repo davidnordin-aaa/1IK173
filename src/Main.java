@@ -61,7 +61,6 @@ public class Main {
 							+ "\nWhat book would you like to lend?"
 							+ "\n---------------------------------"
 							+ "\n[Type here]: ");
-					//String bookTitleToLend = scanner.next();
 					String bookTitleToLend = scanner.nextLine();
 
 					System.out.println("\nLibrarian: Okay, so you want to lend " + "'" + bookTitleToLend + "'");
