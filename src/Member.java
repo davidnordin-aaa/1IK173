@@ -5,7 +5,7 @@ public class Member {
 	public String FirstName;
 	public String LastName;
 	public int MemberType;
-	public int Ssn;
+	public Long Ssn;
 	public int DelayedReturnsCounter;
 	public int SuspensionCounter;
 	public boolean IsSuspended;
@@ -13,7 +13,7 @@ public class Member {
 
 	public Member() {}
 
-	public Member(int id, String firstName, String lastName, int memberType, int ssn, int delayedReturnsCounter, int suspensionCounter, boolean isSuspended, Date suspensionEndDate) {
+	public Member(int id, String firstName, String lastName, int memberType, Long ssn, int delayedReturnsCounter, int suspensionCounter, boolean isSuspended, Date suspensionEndDate) {
 		this.Id = id;
 		this.FirstName = firstName;
 		this.LastName = lastName;
@@ -41,7 +41,7 @@ public class Member {
 		return MemberType;
 	}
 
-	public int getSsn() {
+	public Long getSsn() {
 		return Ssn;
 	}
 

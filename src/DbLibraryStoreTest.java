@@ -29,7 +29,7 @@ public class DbLibraryStoreTest {
     void testAddAndGetAndDeleteMember() { //Test adding and retrieving a member
         String memberId = "1234";
         // Create a test member
-        Member testMember = new Member(1234, "John", "Doe", 1, 9999, 0, 0, false, null);
+        Member testMember = new Member(1234, "John", "Doe", 1, 9999L, 0, 0, false, null);
 
         // Act
         store.addMember(testMember);
@@ -39,7 +39,7 @@ public class DbLibraryStoreTest {
         assertNotNull(retrieved);
         assertEquals("John", retrieved.getFirstName());
         assertEquals("Doe", retrieved.getLastName());
-        assertEquals(9999, retrieved.getSsn());
+        assertEquals(9999L, retrieved.getSsn());
 
         //test deletion
         store.removeMember(memberId);
@@ -50,7 +50,7 @@ public class DbLibraryStoreTest {
     @Test
     void testSuspendMember() { // Test member suspension logic
         String memberId = "1642";
-        store.addMember(new Member(1642, "Jane", "Doe", 1, 8888, 0, 0, false, null));
+        store.addMember(new Member(1642, "Jane", "Doe", 1, 8888L, 0, 0, false, null));
 
         // Suspend the member once
         store.suspendMember(memberId);

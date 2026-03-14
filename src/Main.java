@@ -348,7 +348,7 @@ public class Main {
 			dbstore.initializeData();
 
 			// 2. Test adding member
-			Member testMember = new Member(4128, "Alice", "Smith", 1, 12345678, 0, 0, false, null);
+			Member testMember = new Member(4128, "Alice", "Smith", 1, 12345678L, 0, 0, false, null);
 			store.addMember(testMember);
 
 			// 3. Test retrieving member
