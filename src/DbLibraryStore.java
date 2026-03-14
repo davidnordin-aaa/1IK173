@@ -84,6 +84,27 @@ public class DbLibraryStore implements ILibraryStore {
 		}
 	}
 
+	public Loan getLoan(long loanId) {
+		String sql = "SELECT * FROM LOANS WHERE LOAN_ID = ?";
+		try (Connection conn = this.connect();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setLong(1, loanId);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				return new Loan(
+						rs.getLong("LOAN_ID"),
+						rs.getInt("MEMBER_ID"),
+						rs.getInt("COPY_ID"),
+						rs.getDate("LOAN_DATE"),
+						rs.getDate("DUE_DATE")
+				);
+			}
+		} catch (SQLException e) {
+			// Handle database error
+		}
+		return null;
+	}
+
 	public boolean lendItem(String memberId, int isbn) {
 		String findItemSql = "SELECT COPY_ID FROM LIBRARYITEMS WHERE ISBN = ? AND IS_AVAILABLE = TRUE LIMIT 1";
 		String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";

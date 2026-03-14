@@ -2,12 +2,12 @@ import java.util.Date;
 
 public class Loan {
     public Long LoanId;
-    public String MemberId;
+    public int MemberId;
     public int CopyId;
     public Date LoanDate;
     public Date DueDate;
 
-    public Loan(Long loanId, String memberId, int copyId, Date loanDate, Date dueDate) {
+    public Loan(Long loanId, int memberId, int copyId, Date loanDate, Date dueDate) {
         this.LoanId = loanId;
         this.MemberId = memberId;
         this.CopyId = copyId;
@@ -39,11 +39,11 @@ public class Loan {
         this.LoanDate = loanDate;
     }
 
-    public String getMemberId() {
+    public int getMemberId() {
         return this.MemberId;
     }
 
-    public void setMemberId(String memberId) {
+    public void setMemberId(int memberId) {
         this.MemberId = memberId;
     }
 
