@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="test" uuid="63a4d9e5-0b2f-4232-94db-927c0aef60b6">
+    <data-source source="LOCAL" name="H2" uuid="63a4d9e5-0b2f-4232-94db-927c0aef60b6">
       <driver-ref>h2.unified</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:C:\Users\david\IdeaProjects\MyLibrary_Group2\test;AUTO_SERVER=TRUE</jdbc-url>
+      <jdbc-url>jdbc:h2:$PROJECT_DIR$/test;AUTO_SERVER=TRUE</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />

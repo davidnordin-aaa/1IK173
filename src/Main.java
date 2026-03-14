@@ -1,6 +1,4 @@
 import java.util.Scanner;
-import org.h2.tools.Server;
-import java.sql.SQLException;
 
 /*
  * NOTE!
@@ -23,22 +21,25 @@ public class Main {
 				+ "\n   ===Welcome to the Library System==="
 				+ "\n-----------------------------------------"
 				+ "\nWho are you or what would you want to do?"
-				+ "\n1. Student"
-				+ "\n2. Teacher"
-				+ "\n3. Librarian"
-				+ "\n4. Not a member *register*"
-				+ "\n8. Testa databas");
-		System.out.print("\n[Input your choice here]: ");
+				+ "\n1. Undergraduate student"
+				+ "\n2. Postgraduate student"
+				+ "\n3. PhD student"
+				+ "\n4. Teacher"
+				+ "\n5. Librarian"
+				+ "\n6. Not a member *register*"
+				+ "\n10. Testa databas");
+		System.out.print("[Input your choice here]: ");
 
 		//int initChoice = scanner.nextInt();
 		int initChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
-		if(initChoice == 1) {
+		if(initChoice == 1) { // Undergraduate student
 			/*
 			 * Be användare välja på vilken nivå den studerar (de får låna olika många böcker)
 			 * Lista saker som specifik student kan göra
 			 * Använd switch
 			 */
+			int studentRole = initChoice;
 
 			// Menu list title
 			System.out.println(
@@ -73,7 +74,18 @@ public class Main {
 					System.out.print("[Input ID here]: ");
 					int studentId = scanner.nextInt();
 
-					// Kolla typ av medlem
+					// Kolla typ av medlem med ID
+					// Kolla antal böcker medlem lånat tidigare (finns begränsning)
+					// Kolla om student får lov att låna (regler)
+					// Om ovan är ok, kolla boktitel via ISBN (int)
+					/*
+					* Om bok inte finns: printa meddelande till bibliotekarien som sen säger till medlem
+					* Om bok finns bibliotekarie kollar om det finns en tillgänglig bok? Om inte, printa meddelande till bibliotekarien som säger till medlem
+					* Om bok finns och är tillgänglig för utlåning, bok ges till medlem och system uppdaterar medlems lånade böcker och uppdaterar bibliotekets tillgängliga böcker för den titeln som medlemmen lånade
+
+
+					 */
+
 					break;
 
 				// Return book
@@ -82,19 +94,23 @@ public class Main {
 					break;
 			}
 
-		} if(initChoice == 2) { // Teacher
-			// Lista saker som bibliotekarie kan göra
-			System.out.println("You're a teacher");
+		} if(initChoice == 2) { // Postgraduate student
+			System.out.println("You're a postgraduate student");
 
-		} if(initChoice == 3) { // Librarian
+		} if(initChoice == 3) { // PhD student
+			System.out.println("You're a PhD student");
+
+		} if(initChoice == 4) { // Teacher
+			System.out.println("You're a teacher");
+			// Kalla på metod för att registrera ny låntagare (tolka att det är personen själv som gör det)
+
+		} if(initChoice == 5) { // Librarian
 			System.out.println("You're a librarian");
 
-		} if(initChoice == 4) { // Register new member
-			System.out.println("You want to register");
-			// Kalla på metod för att registrera ny låntagare (tolka att det är personen själv som gör det)
-		}
+		} if(initChoice == 6) { //Not a member *register*
+			System.out.println("You're not a member");
 
-		if(initChoice == 8) { // testa databas
+		} if(initChoice == 8) { // testa databas
 			DbLibraryStore dbstore = new DbLibraryStore();
 
 			// 1. Setup database and initial books
