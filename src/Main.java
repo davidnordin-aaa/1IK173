@@ -11,23 +11,6 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		try {
-			// Start the H2 TCP Server to allow remote connections
-			// -tcpAllowOthers: Mandatory to allow connections from other computers
-			// -tcpPort: Default is 9092
-			Server server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092").start();
-			System.out.println("H2 TCP Server started and reachable at: " + server.getURL());
-
-			// Proceed with library logic
-			DbLibraryStore store = new DbLibraryStore();
-			store.initializeData();
-
-			// Keep the program running to maintain the server
-		} catch (SQLException e) {
-			System.out.println("Could not start H2 Server: " + e.getMessage());
-		}
-
-
 		//ILibraryStore store = new FileLibraryStore("myfilename.txt");
 		ILibraryStore store = new DbLibraryStore();
 		LibraryService svc = new LibraryService(store);

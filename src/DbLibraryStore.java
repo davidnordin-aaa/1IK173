@@ -2,7 +2,7 @@ import java.sql.*;
 
 public class DbLibraryStore implements ILibraryStore {
 
-	private static final String DB_URL = "jdbc:h2:~/test;AUTO_SERVER=TRUE";
+	private static final String DB_URL = "\"jdbc:h2:./test;AUTO_SERVER=TRUE\"";
 	private static final String USER = "sa";
 	private static final String PASS = "";
 
