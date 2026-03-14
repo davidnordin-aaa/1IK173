@@ -80,7 +80,38 @@ public class DbLibraryStore implements ILibraryStore {
 				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (832575, TRUE)");
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
 			//logger.error("Database initialization failed: {}", e.getMessage());
+		}
+	}
+
+	public void addLibraryItem(int isbn) {
+		String sql = "INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (?, TRUE)";
+		try (Connection conn = this.connect();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, isbn);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Error adding library item: " + e.getMessage());
+		}
+	}
+
+	public void clearDatabase() {
+		try (Connection conn = this.connect(); Statement stmt = conn.createStatement()) {
+			// Disable checks to allow complete deletion
+			stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
+
+			// Truncate and reset auto-increment IDs
+			stmt.execute("TRUNCATE TABLE LOANS RESTART IDENTITY");
+			stmt.execute("TRUNCATE TABLE LIBRARYITEMS RESTART IDENTITY");
+			stmt.execute("TRUNCATE TABLE MEMBERS");
+			stmt.execute("TRUNCATE TABLE BOOKS");
+
+			// Re-enable checks
+			stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -100,18 +131,20 @@ public class DbLibraryStore implements ILibraryStore {
 				);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			// Handle database error
 		}
 		return null;
 	}
 
-	public boolean lendItem(String memberId, int isbn) {
+	public Long lendItem(String memberId, int isbn) {
 		String findItemSql = "SELECT COPY_ID FROM LIBRARYITEMS WHERE ISBN = ? AND IS_AVAILABLE = TRUE LIMIT 1";
 		String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";
 		String insertLoanSql = "INSERT INTO LOANS (MEMBER_ID, COPY_ID, LOAN_DATE, DUE_DATE) VALUES (?, ?, ?, ?)";
 
 		try (Connection conn = this.connect()) {
-			conn.setAutoCommit(false); // Start transaction
+			conn.setAutoCommit(false);
 
 			try (PreparedStatement findStmt = conn.prepareStatement(findItemSql)) {
 				findStmt.setInt(1, isbn);
@@ -120,34 +153,40 @@ public class DbLibraryStore implements ILibraryStore {
 				if (rs.next()) {
 					long copyId = rs.getLong("COPY_ID");
 
-					// Mark item as unavailable
 					try (PreparedStatement updateStmt = conn.prepareStatement(updateItemSql)) {
 						updateStmt.setLong(1, copyId);
 						updateStmt.executeUpdate();
 					}
 
-					// Create loan record
-					try (PreparedStatement insertStmt = conn.prepareStatement(insertLoanSql)) {
+					// Explicitly request LOAN_ID to fix H2 return keys issue
+					try (PreparedStatement insertStmt = conn.prepareStatement(insertLoanSql, new String[]{"LOAN_ID"})) {
 						insertStmt.setString(1, memberId);
 						insertStmt.setLong(2, copyId);
 						insertStmt.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
 						insertStmt.setDate(4, java.sql.Date.valueOf(LocalDate.now().plusDays(15)));
 						insertStmt.executeUpdate();
-					}
 
-					conn.commit(); // Commit transaction
-					return true;
+						try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
+							if (generatedKeys.next()) {
+								long loanId = generatedKeys.getLong(1);
+								conn.commit();
+								return loanId;
+							}
+						}
+					}
 				}
 			} catch (SQLException e) {
-				conn.rollback(); // Rollback if any step fails
+				conn.rollback();
+				e.printStackTrace(); // This will print the exact SQL error to your test console
 				System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			} finally {
 				conn.setAutoCommit(true);
 			}
 		} catch (SQLException e) {
-			System.out.println("Database error during lending: " + e.getMessage());
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 		}
-		return false; // Item not available or error occurred
+		return -1L; // Item not available or error occurred
 	}
 
 	public boolean returnItem(String memberId, int isbn) {
@@ -196,11 +235,13 @@ public class DbLibraryStore implements ILibraryStore {
 				}
 			} catch (SQLException e) {
 				conn.rollback();
+				e.printStackTrace(); // This will print the exact SQL error to your test console
 				System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			} finally {
 				conn.setAutoCommit(true);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
 			System.out.println("Database error during return: " + e.getMessage());
 		}
 		return false; // Loan record not found or error occurred
@@ -228,6 +269,8 @@ public class DbLibraryStore implements ILibraryStore {
 				};
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			//logger.error("Error checking borrowing limits: {}", e.getMessage());
 		}
 		return false;
@@ -242,6 +285,8 @@ public class DbLibraryStore implements ILibraryStore {
 			pstmt.setString(3, id);
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			//logger.error("Failed to update suspension status for {}: {}", id, e.getMessage());
 		}
 	}
@@ -260,6 +305,8 @@ public class DbLibraryStore implements ILibraryStore {
 			pstmt.executeUpdate();
 			//logger.info("Title '{}' added to database.", newBook.title);
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			//logger.error("Failed to add book {}: {}", newBook.ISBN, e.getMessage());
 		}
 	}
@@ -279,6 +326,7 @@ public class DbLibraryStore implements ILibraryStore {
 			pstmt.executeUpdate();
 			//logger.info("Member {} registered successfully.", newMember.Id);
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
 			System.out.println("Database error: " + e.getMessage());
 		}
 	}
@@ -301,6 +349,8 @@ public class DbLibraryStore implements ILibraryStore {
 				book.ISBN = rs.getInt("isbn");
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			//logger.error("Error retrieving book {}: {}", isbn, e.getMessage());
 		}
 		return book;
@@ -331,6 +381,8 @@ public class DbLibraryStore implements ILibraryStore {
 				return member;
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			//logger.error("Error retrieving member {}: {}", id, e.getMessage());
 		}
 		return null;
@@ -356,6 +408,8 @@ public class DbLibraryStore implements ILibraryStore {
 				return isSuspended;
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			//logger.error("Error checking suspension for {}: {}", id, e.getMessage());
 		}
 		return false;
@@ -373,6 +427,8 @@ public class DbLibraryStore implements ILibraryStore {
 				//logger.info("Account for member {} has been deleted.", id);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			//logger.error("Error removing member {}: {}", id, e.getMessage());
 		}
 	}
@@ -400,6 +456,8 @@ public class DbLibraryStore implements ILibraryStore {
 				//logger.info("Member {} suspended until {}", id, endDate);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			//logger.error("Suspension logic failed: {}", e.getMessage());
 		}
 	}
