@@ -295,7 +295,6 @@ public class DbLibraryStore implements ILibraryStore {
 		return false; // Loan record not found or error occurred
 	}
 
-
 	public boolean canMemberBorrow(String memberId) {
 		String sql = "SELECT m.MEMBER_TYPE, COUNT(l.LOAN_ID) as active_loans " +
 				"FROM MEMBERS m LEFT JOIN LOANS l ON m.ID = l.MEMBER_ID " +
@@ -325,6 +324,27 @@ public class DbLibraryStore implements ILibraryStore {
 		return false;
 	}
 
+	private String generateUniqueId(Connection conn) throws SQLException {
+		String query = "SELECT ID FROM MEMBERS";
+		java.util.Set<String> existingIds = new java.util.HashSet<>();
+
+		try (Statement stmt = conn.createStatement();
+			 ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				existingIds.add(rs.getString("ID"));
+			}
+		}
+
+		// Attempt to find a unique 4-digit number (0001 - 9999)
+		for (int i = 1; i <= 9999; i++) {
+			String candidateId = String.format("%04d", i);
+			if (!existingIds.contains(candidateId)) {
+				return candidateId;
+			}
+		}
+		throw new SQLException("No unique IDs available in the 4-digit range.");
+	}
+
 	@Override
 	public void addBook(Book newBook) {
 		String sql = "INSERT INTO books (isbn, title, author, publicationyear) VALUES (?, ?, ?, ?)";
@@ -346,21 +366,38 @@ public class DbLibraryStore implements ILibraryStore {
 
 	@Override
 	public void addMember(Member newMember) {
-		String sql = "INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN) VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN, " +
+				"DELAYED_RETURNS_COUNTER, SUSPENSION_COUNTER, IS_SUSPENDED, SUSPENSION_END_DATE) " +
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-		try (Connection conn = this.connect();
-			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (Connection conn = this.connect()) {
+			//generate unique 4-digit ID
+			String uniqueId = generateUniqueId(conn);
 
-			pstmt.setString(1, String.valueOf(newMember.getId()));
-			pstmt.setString(2, newMember.getFirstName());
-			pstmt.setString(3, newMember.getLastName());
-			pstmt.setInt(4, newMember.getMemberType());
-			pstmt.setLong(5, newMember.getSsn());
-			pstmt.executeUpdate();
-			//logger.info("Member {} registered successfully.", newMember.Id);
+			//default values for new members
+			int initialDelayedReturns = 0;
+			int initialSuspensionCounter = 0;
+			boolean initialSuspensionStatus = false;
+			Date initialSuspensionEndDate = null;
+
+			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+				pstmt.setString(1, uniqueId);
+				pstmt.setString(2, newMember.getFirstName());
+				pstmt.setString(3, newMember.getLastName());
+				pstmt.setInt(4, newMember.getMemberType());
+				pstmt.setLong(5, newMember.getSsn());
+				pstmt.setInt(6, initialDelayedReturns);
+				pstmt.setInt(7, initialSuspensionCounter);
+				pstmt.setBoolean(8, initialSuspensionStatus);
+				pstmt.setNull(9, Types.DATE); // Suspension end date is null for new members
+
+				pstmt.executeUpdate();
+
+				// Optionally update the object with the generated ID
+				newMember.Id = Integer.parseInt(uniqueId);
+			}
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Database error: " + e.getMessage());
+			System.err.println("Database error during member registration: " + e.getMessage());
 		}
 	}
 
