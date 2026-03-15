@@ -184,7 +184,7 @@ public class Main {
 							"\n---------------------------------"
 									+ "\nWhat book would you like to lend?"
 									+ "\n---------------------------------"
-									+ "\n[Type here]: ");
+									+ "\n[Type here]: \n");
 					String bookTitleToLend = scanner.nextLine();
 
 					System.out.println("\nLibrarian: Okay, so you want to lend " + "'" + bookTitleToLend + "'");
@@ -192,7 +192,7 @@ public class Main {
 							+ "\n------------------------------------------");
 
 					System.out.print("[Input ID here]: ");
-					int studentId = scanner.nextInt();
+					int studentId = Integer.parseInt(scanner.nextLine());
 
 					// Kolla typ av medlem med ID
 					// Kolla antal böcker medlem lånat tidigare (finns begränsning)
