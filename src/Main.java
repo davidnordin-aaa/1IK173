@@ -48,7 +48,7 @@ public class Main {
 					+ "\n2. Return book");
 
 			System.out.print("[Input your choice here]: ");
-			int undergraduateChoice = scanner.nextInt();
+			int undergraduateChoice = Integer.parseInt(scanner.nextLine());
 			//int undergraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
 			// [Switch]-------------------------------------------------------------------------------------------------
@@ -86,9 +86,11 @@ public class Main {
 
 				// Return book
 				case 2 :
-					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
-					System.out.print("[Input your ID here]: ");
-					int inputtedId = scanner.nextInt();
+					System.out.println("\nLibrarian - Ok so you would like to return a book(s). Librarian - Can I have your ID?");
+					String inputtedId = scanner.nextLine();
+					System.out.println("Input the books ISBN here: ");
+					int returingIsbn = scanner.nextInt();
+					svc.returnBook(returingIsbn, inputtedId);
 					// Uppdatera medlems antal lånade böcker (just nu) och tillgängligt bokantal i biblioteket
 					break;
 			}

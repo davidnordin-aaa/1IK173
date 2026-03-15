@@ -1,6 +1,5 @@
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 /*
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,20 +86,29 @@ public class DbLibraryStore implements ILibraryStore {
 	}
 
 
-	public boolean isAlreadyBorrowed(int isbn) {
+	public int isAlreadyBorrowed(String memberId, int isbn) {
 		//String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";
-		String sql = "SELECT 1 FROM LIBRARYITEMS WHERE COPY_ID = ? AND IS_AVAILABLE = FALSE";
+		String sql = "SELECT LOAN_ID from TEST.PUBLIC.LOANS\n" +
+				"join MEMBERS on LOANS.MEMBER_ID = MEMBERS.ID\n" +
+				"join LIBRARYITEMS on LOANS.COPY_ID = LIBRARYITEMS.COPY_ID\n" +
+				"where MEMBER_ID = ? and ISBN = ? limit 1";
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setInt(1, isbn);
+			pstmt.setInt(1, Integer.parseInt(memberId));
+			pstmt.setInt(2, isbn);
 			ResultSet rs = pstmt.executeQuery();
-			return rs.next();
+			if(rs.next()){
+				return rs.getInt("LOAN_ID");
+			}
+			else{
+				return -1;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace(); // This will print the exact SQL error to your test console
 			System.out.println("Transaction failed, rolling back: " + e.getMessage());
 			// Handle database error
 		}
-		return false;
+		return -1;
 	}
 
 	public void clearDatabase() {

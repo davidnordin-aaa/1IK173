@@ -27,7 +27,41 @@ public class LibraryService {
 				System.out.println("We couldnt borrow that book because it is already loaned to another person.");
 			}
 			else{
-				System.out.println("You are now the proud owner of "+ book.title+ " until " + newLoan.DueDate +".");
+				System.out.println("You are now the proud owner of "+ book.title+ " until " + newLoan.DueDate +"." + "\nPress enter to go back to main screen");
+				Main.main(null);
+			}
+		}
+		else{
+			System.out.println("We couldnt find that book, please double check your search.");
+			Main.main(null);
+		}
+
+		return status;
+
+
+
+	}
+	public boolean returnBook(int isbn, String memberId) {
+		boolean status = false;
+		Scanner scanner = new Scanner(System.in);
+		Member memberInfo = store.getMember(memberId);
+		String stringIsbn = String.valueOf(isbn);
+		Book book = store.getBook(stringIsbn);
+		DbLibraryStore DB = new DbLibraryStore();
+
+		System.out.println("\nIs this the book you wish to return?");
+		System.out.println("Book: " + book.author + " \nWith title: " + book.title + " \nFrom year: " + book.year + " \nWith ISBN: " + book.ISBN);
+		String input = scanner.nextLine();
+		if (Objects.equals(input, "Yes")){
+			System.out.println("Great we will try to get that sorted");
+			boolean newReturn = executeReturn(memberId,isbn);
+			if (!newReturn){
+				System.out.println("We couldnt return "+ book.title +". If you have more problems, contact support");
+			}
+			else{
+				System.out.println("You have now returned "+ book.title+ " until " +"." + "\nPress enter to go back to main screen");
+				scanner.nextLine();
+				Main.main(null);
 			}
 		}
 		else{
@@ -41,16 +75,27 @@ public class LibraryService {
 
 	}
 
+
 	private Loan executeLoan(String memberId, int isbn) {
 		DbLibraryStore DB = new DbLibraryStore();
 		Loan newLoan = null;
-		if(!DB.isAlreadyBorrowed(isbn)){
+		if(DB.isAlreadyBorrowed(memberId, isbn) == -1){
 			long loanID = DB.lendItem(memberId,isbn);
 			if(loanID > 0) {
 				newLoan = DB.getLoan(loanID);
 			}
 		}
 		return newLoan;
+	}
+	private boolean executeReturn(String memberId, int isbn) {
+		DbLibraryStore DB = new DbLibraryStore();
+		boolean newReturn = false;
+		int loanID = DB.isAlreadyBorrowed(memberId, isbn);
+		if(loanID > 0){
+			newReturn = DB.returnItem(memberId,isbn);
+			newReturn = true;
+		}
+		return newReturn;
 	}
 
 }
