@@ -132,7 +132,7 @@ public class Main {
 									+ "\n---------------------------------"
 									+ "\n[Enter ISBN here]: ");
 					scanner.nextLine();
-					String isbnItem = scanner.nextLine();
+					int isbnItem = scanner.nextInt();
 
 					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
@@ -199,7 +199,7 @@ public class Main {
 									+ "\n---------------------------------"
 									+ "\n[Enter ISBN here]: ");
 					scanner.nextLine();
-					String isbnItem = scanner.nextLine();
+					int isbnItem = scanner.nextInt();
 
 					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
@@ -266,7 +266,7 @@ public class Main {
 									+ "\n---------------------------------"
 									+ "\n[Enter ISBN here]: ");
 					scanner.nextLine();
-					String isbnItem = scanner.nextLine();
+					int isbnItem = scanner.nextInt();
 
 					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
@@ -344,8 +344,10 @@ public class Main {
 					System.out.print("Enter the members social security number: ");
 					Long ssn = scanner.nextLong();
 
-					Member member = new Member(1239, fName, lName, 1, ssn, 0, 0, false, null); // Behöver uppdatera id manuellt så det är unikt om det inte löses på annat sätt
+					// Add member
+					Member member = new Member(0, fName, lName, 1, ssn, 0, 0, false, null);
 					DB.addMember(member);
+
 					System.out.println("\nLibrarian - You " + "'" + fName + "'" + " have successfully been added as a member at the library!"
 					+ "\nLibrarian - You can now start using the system!");
 					// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
@@ -376,8 +378,8 @@ public class Main {
 			System.out.print("Type your social security number: ");
 			Long ssn = scanner.nextLong();
 
-			// Add member based on input
-			Member member = new Member(1233, fName, lName, 1, ssn, 0, 0, false, null); // Behöver uppdatera id manuellt så det är unikt om det inte löses på annat sätt
+			// Add member
+			Member member = new Member(0, fName, lName, 1, ssn, 0, 0, false, null);
 			DB.addMember(member);
 			System.out.println("You " + "'" + fName + "'" + " have successfully been added as a member at the library!");
 			// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
