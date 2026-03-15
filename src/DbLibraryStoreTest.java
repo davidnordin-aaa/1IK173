@@ -4,10 +4,19 @@ import static org.mockito.Mockito.mock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import java.sql.*;
 import java.util.Date;
 
 public class DbLibraryStoreTest {
     private DbLibraryStore store;
+
+    private static final String DB_URL = "jdbc:h2:./test;AUTO_SERVER=TRUE";
+    private static final String USER = "sa";
+    private static final String PASS = "";
+
+    private Connection connect() throws SQLException {
+        return DriverManager.getConnection(DB_URL, USER, PASS);
+    }
 /*
     public FileLibraryStore fls;
     public PurchaseManager cut;
@@ -22,7 +31,21 @@ public class DbLibraryStoreTest {
     @BeforeEach
     void setUp() {
         store = new DbLibraryStore();
-        store.clearDatabase();
+        try (Connection conn = this.connect(); Statement stmt = conn.createStatement()) {
+            // Disable checks to allow complete deletion
+            stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
+
+            // Truncate and reset auto-increment IDs
+            stmt.execute("TRUNCATE TABLE LOANS RESTART IDENTITY");
+            stmt.execute("TRUNCATE TABLE LIBRARYITEMS RESTART IDENTITY");
+            stmt.execute("TRUNCATE TABLE MEMBERS");
+            stmt.execute("TRUNCATE TABLE BOOKS");
+
+            // Re-enable checks
+            stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         store.initializeData(); // Ensure tables and sample books exist
     }
 
