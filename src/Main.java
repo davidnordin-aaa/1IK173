@@ -49,7 +49,8 @@ public class Main {
 			// Choose option from menu list
 			System.out.println(
 					"1. Lend book"
-					+ "\n2. Return book");
+					+ "\n2. Return book"
+					+ "\n3. Delete account");
 
 			System.out.print("[Input your choice here]: ");
 			int undergraduateChoice = Integer.parseInt(scanner.nextLine());
@@ -94,6 +95,11 @@ public class Main {
 					System.out.println("Input the books ISBN here: ");
 					int returingIsbn = Integer.parseInt(scanner.nextLine());
 					svc.returnBook(returingIsbn, inputtedId);
+				case 3 : // Return book
+					System.out.println("\nLibrarian - Ok so you would like to delete your account?. Librarian - Can I have your ID?");
+					String deltionID = scanner.nextLine();
+					svc.requestDeletion(deltionID);
+					break;
 			}
 
 		// [2. Postgraduate]============================================================================================

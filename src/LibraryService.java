@@ -68,13 +68,9 @@ public class LibraryService {
 			System.out.println("We couldnt find that book, please double check your search.");
 			Main.main(null);
 		}
-
 		return status;
 
-
-
 	}
-
 
 	private Loan executeLoan(String memberId, int isbn) {
 		DbLibraryStore DB = new DbLibraryStore();
@@ -96,6 +92,22 @@ public class LibraryService {
 			newReturn = true;
 		}
 		return newReturn;
+	}
+	public boolean requestDeletion(String memberID){
+		DbLibraryStore DB = new DbLibraryStore();
+		 try {
+			 DB.removeMember(memberID);
+			 if(DB.getMember(memberID) == null){
+				System.out.println("Your account has been removed.");
+			 }
+			 else{
+				 throw new Exception();
+			 }
+		 }
+		 catch (Exception e){
+			 System.out.println("We could not remove your account. Double check if you have unreturned books!");
+		 }
+		return false;
 	}
 
 }
