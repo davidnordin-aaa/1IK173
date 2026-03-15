@@ -86,6 +86,23 @@ public class DbLibraryStore implements ILibraryStore {
 		}
 	}
 
+
+	public boolean isAlreadyBorrowed(int isbn) {
+		//String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";
+		String sql = "SELECT 1 FROM LIBRARYITEMS WHERE COPY_ID = ? AND IS_AVAILABLE = FALSE";
+		try (Connection conn = this.connect();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, isbn);
+			ResultSet rs = pstmt.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
+			// Handle database error
+		}
+		return false;
+	}
+
 	public void clearDatabase() {
 		try (Connection conn = this.connect(); Statement stmt = conn.createStatement()) {
 			// Disable checks to allow complete deletion

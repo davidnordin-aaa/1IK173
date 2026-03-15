@@ -72,4 +72,9 @@ public class FileLibraryStore implements ILibraryStore {
 	}
 
 
+	public boolean isAlreadyBorrowed(int isbn) {
+		return false;
+	}
+
+
 }
