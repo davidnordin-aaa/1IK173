@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 /*
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,7 +85,7 @@ public class DbLibraryStore implements ILibraryStore {
 			//logger.error("Database initialization failed: {}", e.getMessage());
 		}
 	}
-
+	@Override
 	public void addLibraryItem(int isbn) {
 		String sql = "INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (?, TRUE)";
 		try (Connection conn = this.connect();
@@ -114,7 +115,7 @@ public class DbLibraryStore implements ILibraryStore {
 			e.printStackTrace();
 		}
 	}
-
+	@Override
 	public Loan getLoan(long loanId) {
 		String sql = "SELECT * FROM LOANS WHERE LOAN_ID = ?";
 		try (Connection conn = this.connect();
@@ -137,7 +138,7 @@ public class DbLibraryStore implements ILibraryStore {
 		}
 		return null;
 	}
-
+	@Override
 	public Long lendItem(String memberId, int isbn) {
 		String findItemSql = "SELECT COPY_ID FROM LIBRARYITEMS WHERE ISBN = ? AND IS_AVAILABLE = TRUE LIMIT 1";
 		String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";
@@ -188,7 +189,7 @@ public class DbLibraryStore implements ILibraryStore {
 		}
 		return -1L; // Item not available or error occurred
 	}
-
+	@Override
 	public boolean returnItem(String memberId, int isbn) {
 		String findLoanSql = "SELECT l.LOAN_ID, l.COPY_ID, l.DUE_DATE FROM LOANS l " +
 				"JOIN LIBRARYITEMS i ON l.COPY_ID = i.COPY_ID " +
@@ -246,7 +247,7 @@ public class DbLibraryStore implements ILibraryStore {
 		}
 		return false; // Loan record not found or error occurred
 	}
-
+	@Override
 	public boolean canMemberBorrow(String memberId) {
 		String sql = "SELECT m.MEMBER_TYPE, COUNT(l.LOAN_ID) as active_loans " +
 				"FROM MEMBERS m LEFT JOIN LOANS l ON m.ID = l.MEMBER_ID " +
