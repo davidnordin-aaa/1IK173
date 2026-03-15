@@ -29,6 +29,7 @@ public class Main {
 		//int initChoice = scanner.nextInt();
 		int initChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
+		// [Undergraduate]==============================================================================================
 		if(initChoice == 1) { // Undergraduate student
 			/*
 			 * Be användare välja på vilken nivå den studerar (de får låna olika många böcker)
@@ -52,7 +53,7 @@ public class Main {
 			//int studentChoice = scanner.nextInt();
 			int undergraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
-			// Switch (Undergraduate student actions)====================================================================
+			// [Switch]-------------------------------------------------------------------------------------------------
 			switch(undergraduateChoice) {
 				// Lend book
 				case 1 :
@@ -78,10 +79,7 @@ public class Main {
 					* Om bok inte finns: printa meddelande till bibliotekarien som sen säger till medlem
 					* Om bok finns bibliotekarie kollar om det finns en tillgänglig bok? Om inte, printa meddelande till bibliotekarien som säger till medlem
 					* Om bok finns och är tillgänglig för utlåning, bok ges till medlem och system uppdaterar medlems lånade böcker och uppdaterar bibliotekets tillgängliga böcker för den titeln som medlemmen lånade
-
-
 					 */
-
 					break;
 
 				// Return book
@@ -93,6 +91,7 @@ public class Main {
 					break;
 			}
 
+		// [Postgraduate]===============================================================================================
 		} if(initChoice == 2) { // Postgraduate student
 			System.out.println("You're a postgraduate student");
 			int studentRole = initChoice;
@@ -112,7 +111,7 @@ public class Main {
 			//int studentChoice = scanner.nextInt();
 			int postgraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
-			// Switch (Postgraduate student actions)====================================================================
+			// [Switch]-------------------------------------------------------------------------------------------------
 			switch(postgraduateChoice) {
 				// Lend book
 				case 1 :
@@ -153,6 +152,7 @@ public class Main {
 					break;
 			}
 
+		// [PhD]========================================================================================================
 		} if(initChoice == 3) { // PhD student
 			System.out.println("You're a PhD student");
 			int studentRole = initChoice;
@@ -172,7 +172,7 @@ public class Main {
 			//int studentChoice = scanner.nextInt();
 			int phdChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
-			// Switch (PhD student actions)====================================================================
+			// [Switch]-------------------------------------------------------------------------------------------------
 			switch(phdChoice) {
 				// Lend book
 				case 1 :
@@ -213,6 +213,7 @@ public class Main {
 					break;
 			}
 
+		// [Teacher]====================================================================================================
 		} if(initChoice == 4) { // Teacher
 			System.out.println("You're a teacher");
 			// Kalla på metod för att registrera ny låntagare (tolka att det är personen själv som gör det)
@@ -233,7 +234,7 @@ public class Main {
 			//int studentChoice = scanner.nextInt();
 			int teacherChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
-			// Switch (teacher actions)====================================================================
+			// [Switch]-------------------------------------------------------------------------------------------------
 			switch(teacherChoice) {
 				// Lend book
 				case 1 :
@@ -274,6 +275,7 @@ public class Main {
 					break;
 			}
 
+		// [Librarian]==================================================================================================
 		} if(initChoice == 5) { // Librarian
 			/*
 			* Registrera nya medlemmar
@@ -297,6 +299,7 @@ public class Main {
 			System.out.print("\n[Input your choice here]: ");
 			int librarianChoice = scanner.nextInt();
 
+			// [Switch]-------------------------------------------------------------------------------------------------
 			switch(librarianChoice) {
 				case 1 :
 					/*
@@ -310,15 +313,19 @@ public class Main {
 
 					System.out.print("\nType your first name: ");
 					String fName = scanner.nextLine();
+					scanner.nextLine();
 
-					System.out.print("\nType your last name: ");
+					System.out.print("Type your last name: ");
 					String lName = scanner.nextLine();
 
-					System.out.print("\nType your social security number: ");
-					String ssn = scanner.nextLine();
+					System.out.print("Type your social security number: ");
+					Long ssn = scanner.nextLong();
 
-					//Member member = new Member(fName, 3333, 1, 123456789, 0, 0, false, null);
+					Member member = new Member(1234, fName, lName, 1, ssn, 0, 0, false, null);
 					//DB.addMember(member);
+
+					// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
+					// Kolla om personnummer redan finns i databas innan lägga till
 
 					/*
 					Lägg till information
@@ -328,19 +335,46 @@ public class Main {
 					break;
 
 				case 2 :
-					System.out.println("Delete member");
+					System.out.println("\nLibrarian - Ok, so you would like to delete a member");
 					break;
 
 				case 3 :
-					System.out.println("Suspend member");
+					System.out.println("\nLibrarian - Ok, so you would like to suspend a member");
 					break;
 			}
 
-
+		// [Not a member]===============================================================================================
 		} if(initChoice == 6) { // Not a member *register*
-			System.out.println("Librarian - Ok, so you would like to become a member?");
+			System.out.println("\nLibrarian - Ok, so you would like to become a member"
+					+ "\nLibrarian - Then, I would like to get your information");
+
+			System.out.print("\nType your first name: ");
+			String fName = scanner.nextLine();
+
+			System.out.print("Type your last name: ");
+			String lName = scanner.nextLine();
+
+			System.out.print("Type your social security number: ");
+			Long ssn = scanner.nextLong();
+
+			Member member = new Member(1234, fName, lName, 1, ssn, 0, 0, false, null);
+			//DB.addMember(member);
+
+			// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
+			// Kolla om personnummer redan finns i databas innan lägga till
 
 
+
+
+
+
+
+
+
+
+
+
+		// [Testa databas]==============================================================================================
 		} if(initChoice == 8) { // testa databas
 			DbLibraryStore dbstore = new DbLibraryStore();
 
