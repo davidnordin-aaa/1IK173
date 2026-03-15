@@ -29,7 +29,6 @@ public class DbLibraryStore implements ILibraryStore {
 			stmt.execute("CREATE TABLE IF NOT EXISTS BOOKS (" +
 					"ISBN INTEGER PRIMARY KEY, TITLE VARCHAR(255), AUTHOR VARCHAR(255), PUBLICATIONYEAR INTEGER)");
 
-			// New table creations based on the provided H2 schema
 			stmt.execute("CREATE TABLE IF NOT EXISTS LIBRARYITEMS (" +
 					"COPY_ID BIGINT AUTO_INCREMENT PRIMARY KEY, " +
 					"ISBN INTEGER REFERENCES BOOKS(ISBN), " +
@@ -83,24 +82,6 @@ public class DbLibraryStore implements ILibraryStore {
 		} catch (SQLException e) {
 			e.printStackTrace(); // This will print the exact SQL error to your test console
 			//logger.error("Database initialization failed: {}", e.getMessage());
-		}
-	}
-
-	public void clearDatabase() {
-		try (Connection conn = this.connect(); Statement stmt = conn.createStatement()) {
-			// Disable checks to allow complete deletion
-			stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
-
-			// Truncate and reset auto-increment IDs
-			stmt.execute("TRUNCATE TABLE LOANS RESTART IDENTITY");
-			stmt.execute("TRUNCATE TABLE LIBRARYITEMS RESTART IDENTITY");
-			stmt.execute("TRUNCATE TABLE MEMBERS");
-			stmt.execute("TRUNCATE TABLE BOOKS");
-
-			// Re-enable checks
-			stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 	}
 
