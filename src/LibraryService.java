@@ -16,14 +16,16 @@ public class LibraryService {
 		Book book = store.getBook(isbn);
 
 		// more code here...
-		System.out.println("\nIs this the book you wish to borrow?");
-		System.out.print("Book: " + book.author + " \nWith title: " + book.title + " \nFrom year: " + book.year + " \nWith ISBN: " + book.ISBN);
+		System.out.println("\nIs this the book you wish to borrow?"
+		+ "\n------------------------------------");
+		System.out.println("Book: " + book.author + " \nWith title: " + book.title + " \nFrom year: " + book.year + " \nWith ISBN: " + book.ISBN);
+		System.out.print("[Type yes or no here]: ");
 		String input = scanner.nextLine();
 		if (Objects.equals(input, "Yes")){
 			System.out.println("Great we will try to get that sorted");
 		}
 		else{
-			System.out.println("We couldnt find that book, please double check your search.");
+			System.out.println("\nWe couldnt find that book, please double check your search.\n");
 			Main.main(null);
 		}
 		/*
