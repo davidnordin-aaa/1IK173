@@ -20,7 +20,7 @@ public class LibraryService {
 		System.out.println("\nIs this the book you wish to borrow?");
 		System.out.println("Book: " + book.author + " \nWith title: " + book.title + " \nFrom year: " + book.year + " \nWith ISBN: " + book.ISBN);
 		String input = scanner.nextLine();
-		if (Objects.equals(input, "Yes")){
+		if (Objects.equals(input.toLowerCase(), "yes")){
 			System.out.println("Great we will try to get that sorted");
 			Loan newLoan = executeLoan(memberId,isbn);
 			if (newLoan == null){
@@ -52,14 +52,14 @@ public class LibraryService {
 		System.out.println("\nIs this the book you wish to return?");
 		System.out.println("Book: " + book.author + " \nWith title: " + book.title + " \nFrom year: " + book.year + " \nWith ISBN: " + book.ISBN);
 		String input = scanner.nextLine();
-		if (Objects.equals(input, "Yes")){
-			System.out.println("Great we will try to get that sorted");
+		if (Objects.equals(input.toLowerCase(), "yes")){
+			System.out.println("Great we will try to get that return sorted");
 			boolean newReturn = executeReturn(memberId,isbn);
 			if (!newReturn){
 				System.out.println("We couldnt return "+ book.title +". If you have more problems, contact support");
 			}
 			else{
-				System.out.println("You have now returned "+ book.title+ " until " +"." + "\nPress enter to go back to main screen");
+				System.out.println("You have now returned "+ book.title+ "." + "\nPress enter to go back to main screen");
 				scanner.nextLine();
 				Main.main(null);
 			}
