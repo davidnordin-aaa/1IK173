@@ -52,7 +52,7 @@ public class Main {
 					+ "\n2. Return book");
 
 			System.out.print("[Input your choice here]: ");
-			int undergraduateChoice = scanner.nextInt();
+			int undergraduateChoice = Integer.parseInt(scanner.nextLine());
 			//int undergraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
 			// [Switch]-------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ public class Main {
 							+ "\n---------------------------------"
 							+ "\n[Enter ISBN here]: ");
 					scanner.nextLine();
-					int isbnItem = scanner.nextInt();
+					int isbnItem = Integer.parseInt(scanner.nextLine());
 
 					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
@@ -73,7 +73,7 @@ public class Main {
 
 					// Input ID
 					System.out.print("[Input your ID for confirmation here]: ");
-					int studentId = scanner.nextInt();
+					int studentId = Integer.parseInt(scanner.nextLine());
 
 					// Kalla på borrow-metod i LibraryService
 					svc.borrow(isbnItem, inputId);
@@ -88,13 +88,12 @@ public class Main {
 					* Om bok finns och är tillgänglig för utlåning, bok ges till medlem och system uppdaterar medlems lånade böcker och uppdaterar bibliotekets tillgängliga böcker för den titeln som medlemmen lånade
 					 */
 					break;
-
 				case 2 : // Return book
-					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
-					System.out.print("[Input your ID here]: ");
-					int inputtedId = scanner.nextInt();
-					// Uppdatera medlems antal lånade böcker (just nu) och tillgängligt bokantal i biblioteket
-					break;
+					System.out.println("\nLibrarian - Ok so you would like to return a book(s). Librarian - Can I have your ID?");
+					String inputtedId = scanner.nextLine();
+					System.out.println("Input the books ISBN here: ");
+					int returingIsbn = Integer.parseInt(scanner.nextLine());
+					svc.returnBook(returingIsbn, inputtedId);
 			}
 
 		// [2. Postgraduate]============================================================================================
@@ -119,7 +118,7 @@ public class Main {
 							+ "\n2. Return book");
 
 			System.out.print("[Input your choice here]: ");
-			int postgraduateChoice = scanner.nextInt();
+			int postgraduateChoice = Integer.parseInt(scanner.nextLine());
 			//int postgraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
 			// [Switch]-------------------------------------------------------------------------------------------------
@@ -132,7 +131,7 @@ public class Main {
 									+ "\n---------------------------------"
 									+ "\n[Enter ISBN here]: ");
 					scanner.nextLine();
-					int isbnItem = scanner.nextInt();
+					int isbnItem = Integer.parseInt(scanner.nextLine());
 
 					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
@@ -140,7 +139,7 @@ public class Main {
 
 					// Input ID
 					System.out.print("[Input your ID for confirmation here]: ");
-					int studentId = scanner.nextInt();
+					int studentId = Integer.parseInt(scanner.nextLine());
 
 					// Kalla på borrow-metod i LibraryService
 					svc.borrow(isbnItem, inputId);
@@ -159,7 +158,7 @@ public class Main {
 				case 2 : // Return book
 					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
 					System.out.print("[Input your ID here]: ");
-					int inputtedId = scanner.nextInt();
+					int inputtedId = Integer.parseInt(scanner.nextLine());
 					// Uppdatera medlems antal lånade böcker (just nu) och tillgängligt bokantal i biblioteket
 					break;
 			}
@@ -186,7 +185,7 @@ public class Main {
 							+ "\n2. Return book");
 
 			System.out.print("[Input your choice here]: ");
-			int phdChoice = scanner.nextInt();
+			int phdChoice = Integer.parseInt(scanner.nextLine());
 			//int phdChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
 			// [Switch]-------------------------------------------------------------------------------------------------
@@ -199,7 +198,7 @@ public class Main {
 									+ "\n---------------------------------"
 									+ "\n[Enter ISBN here]: ");
 					scanner.nextLine();
-					int isbnItem = scanner.nextInt();
+					int isbnItem = Integer.parseInt(scanner.nextLine());
 
 					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
@@ -207,7 +206,7 @@ public class Main {
 
 					// Input ID
 					System.out.print("[Input your ID for confirmation here]: ");
-					int studentId = scanner.nextInt();
+					int studentId = Integer.parseInt(scanner.nextLine());
 
 					// Kalla på borrow-metod i LibraryService
 					svc.borrow(isbnItem, inputId);
@@ -226,7 +225,7 @@ public class Main {
 				case 2 : // Return book
 					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
 					System.out.print("[Input your ID here]: ");
-					int inputtedId = scanner.nextInt();
+					int inputtedId = Integer.parseInt(scanner.nextLine());
 					// Uppdatera medlems antal lånade böcker (just nu) och tillgängligt bokantal i biblioteket
 					break;
 			}
@@ -253,7 +252,7 @@ public class Main {
 							+ "\n2. Return book");
 
 			System.out.print("[Input your choice here]: ");
-			int teacherChoice = scanner.nextInt();
+			int teacherChoice = Integer.parseInt(scanner.nextLine());
 			//int undergraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
 			// [Switch]-------------------------------------------------------------------------------------------------
@@ -266,7 +265,7 @@ public class Main {
 									+ "\n---------------------------------"
 									+ "\n[Enter ISBN here]: ");
 					scanner.nextLine();
-					int isbnItem = scanner.nextInt();
+					int isbnItem = Integer.parseInt(scanner.nextLine());
 
 					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
@@ -274,8 +273,7 @@ public class Main {
 
 					// Input ID
 					System.out.print("[Input your ID for confirmation here]: ");
-					int studentId = scanner.nextInt();
-
+					int studentId = Integer.parseInt(scanner.nextLine());
 					// Kalla på borrow-metod i LibraryService
 					svc.borrow(isbnItem, inputId);
 
@@ -293,7 +291,7 @@ public class Main {
 				case 2 : // Return book
 					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
 					System.out.print("[Input your ID here]: ");
-					int inputtedId = scanner.nextInt();
+					int inputtedId = Integer.parseInt(scanner.nextLine());
 					// Uppdatera medlems antal lånade böcker (just nu) och tillgängligt bokantal i biblioteket
 					break;
 			}
@@ -320,7 +318,7 @@ public class Main {
 							+ "\n3. Suspend member");
 
 			System.out.print("\n[Input your choice here]: ");
-			int librarianChoice = scanner.nextInt();
+			int librarianChoice = Integer.parseInt(scanner.nextLine());
 
 			// [Switch]-------------------------------------------------------------------------------------------------
 			switch(librarianChoice) {
@@ -342,7 +340,7 @@ public class Main {
 					String lName = scanner.nextLine();
 
 					System.out.print("Enter the members social security number: ");
-					Long ssn = scanner.nextLong();
+					Long ssn = Long.parseLong(scanner.nextLine());
 
 					// Add member
 					Member member = new Member(0, fName, lName, 1, ssn, 0, 0, false, null);
@@ -376,7 +374,7 @@ public class Main {
 			String lName = scanner.nextLine();
 
 			System.out.print("Type your social security number: ");
-			Long ssn = scanner.nextLong();
+			Long ssn = Long.parseLong(scanner.nextLine());
 
 			// Add member
 			Member member = new Member(0, fName, lName, 1, ssn, 0, 0, false, null);
