@@ -11,7 +11,7 @@ public class Main {
 		DbLibraryStore DB = new DbLibraryStore();
 		Scanner scanner = new Scanner(System.in);
 
-		// Välkomstmeddelande + meny
+		// [Titel och meny]=============================================================================================
 		System.out.println(
 				"-----------------------------------------"
 				+ "\n   ===Welcome to the Library System==="
@@ -25,25 +25,24 @@ public class Main {
 				+ "\n6. Not a member *register*"
 				+ "\n10. Testa databas");
 		System.out.print("\n[Input your choice here]: ");
-
 		//int initChoice = scanner.nextInt();
-		int initChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
+		int initChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur vanliga scanner läste
 
-		// [Undergraduate]==============================================================================================
-		if(initChoice == 1) { // Undergraduate student
+		// [1. Undergraduate]===========================================================================================
+		if(initChoice == 1) {
 			int studentRole = initChoice;
 
-			// Identify with ID
+			// Input ID
 			System.out.print("\nPlease identify yourself to grant member access by providing your ID: ");
 			String inputId = scanner.nextLine();
 
-			// Menu list title
+			// Menu title
 			System.out.println(
 					"\n----------------------------------------------"
 					+ "\nSelect from the list what would you like to do"
 					+ "\n----------------------------------------------");
 
-			// Menu list content
+			// Choose option from menu list
 			System.out.println(
 					"1. Lend book"
 					+ "\n2. Return book");
@@ -57,7 +56,6 @@ public class Main {
 				case 1 :
 					//svc.borrow("12342123231");
 
-
 					System.out.print(
 							"\n---------------------------------"
 							+ "\nWhat book would you like to lend?"
@@ -66,11 +64,11 @@ public class Main {
 					scanner.nextLine();
 					String isbnItem = scanner.nextLine();
 
-					System.out.println("\nLibrarian: Okay, so you want to lend " + "'" + isbnItem + "'");
+					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
 					+ "\n------------------------------------------");
 
-					System.out.print("[Input ID here]: ");
+					System.out.print("[Input your ID for confirmation here]: ");
 					int studentId = scanner.nextInt();
 
 					svc.borrow(isbnItem, inputId);
@@ -95,8 +93,8 @@ public class Main {
 					break;
 			}
 
-		// [Postgraduate]===============================================================================================
-		} if(initChoice == 2) { // Postgraduate student
+		// [2. Postgraduate]============================================================================================
+		} if(initChoice == 2) {
 			System.out.println("You're a postgraduate student");
 			int studentRole = initChoice;
 
@@ -156,8 +154,8 @@ public class Main {
 					break;
 			}
 
-		// [PhD]========================================================================================================
-		} if(initChoice == 3) { // PhD student
+		// [3. PhD]=====================================================================================================
+		} if(initChoice == 3) {
 			System.out.println("You're a PhD student");
 			int studentRole = initChoice;
 
@@ -217,8 +215,8 @@ public class Main {
 					break;
 			}
 
-		// [Teacher]====================================================================================================
-		} if(initChoice == 4) { // Teacher
+		// [4. Teacher]=================================================================================================
+		} if(initChoice == 4) {
 			System.out.println("You're a teacher");
 			// Kalla på metod för att registrera ny låntagare (tolka att det är personen själv som gör det)
 			int studentRole = initChoice;
@@ -229,7 +227,7 @@ public class Main {
 							+ "\nSelect from the list what would you like to do"
 							+ "\n----------------------------------------------");
 
-			// Menu list content
+			// Choose from menu list
 			System.out.println(
 					"1. Lend book"
 							+ "\n2. Return book");
@@ -264,10 +262,7 @@ public class Main {
 					 * Om bok inte finns: printa meddelande till bibliotekarien som sen säger till medlem
 					 * Om bok finns bibliotekarie kollar om det finns en tillgänglig bok? Om inte, printa meddelande till bibliotekarien som säger till medlem
 					 * Om bok finns och är tillgänglig för utlåning, bok ges till medlem och system uppdaterar medlems lånade böcker och uppdaterar bibliotekets tillgängliga böcker för den titeln som medlemmen lånade
-
-
 					 */
-
 					break;
 
 				// Return book
@@ -279,8 +274,8 @@ public class Main {
 					break;
 			}
 
-		// [Librarian]==================================================================================================
-		} if(initChoice == 5) { // Librarian
+		// [5. Librarian]===============================================================================================
+		} if(initChoice == 5) {
 			/*
 			* Registrera nya medlemmar
 			* Ett och samma switch för att radera på förfrågan eller för att de varit suspended 2 gånger redan
@@ -349,8 +344,8 @@ public class Main {
 					break;
 			}
 
-		// [Not a member]===============================================================================================
-		} if(initChoice == 6) { // Not a member *register*
+		// [6. Not a member *register*]=================================================================================
+		} if(initChoice == 6) {
 			System.out.println("\nLibrarian - Ok, so you would like to become a member"
 					+ "\nLibrarian - Then, I would like to get your information");
 
@@ -381,8 +376,8 @@ public class Main {
 
 
 
-		// [Testa databas]==============================================================================================
-		} if(initChoice == 8) { // testa databas
+		// [8. Testa databas]===========================================================================================
+		} if(initChoice == 8) {
 			DbLibraryStore dbstore = new DbLibraryStore();
 
 			// 1. Setup database and initial books

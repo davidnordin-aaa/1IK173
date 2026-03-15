@@ -16,8 +16,8 @@ public class LibraryService {
 		Book book = store.getBook(isbn);
 
 		// more code here...
-		System.out.println("Is this the book you want to borrow?");
-		System.out.println(book.author + book.title + book.year + book.ISBN);
+		System.out.println("\nIs this the book you wish to borrow?");
+		System.out.print("Book: " + book.author + " \nWith title: " + book.title + " \nFrom year: " + book.year + " \nWith ISBN: " + book.ISBN);
 		String input = scanner.nextLine();
 		if (Objects.equals(input, "Yes")){
 			System.out.println("Great we will try to get that sorted");
