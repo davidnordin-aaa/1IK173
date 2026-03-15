@@ -11,7 +11,7 @@ public class Main {
 		DbLibraryStore DB = new DbLibraryStore();
 		Scanner scanner = new Scanner(System.in);
 
-		// [Titel och meny]=============================================================================================
+		// [Titel & meny]=============================================================================================
 		System.out.println(
 				"-----------------------------------------"
 				+ "\n   ===Welcome to the Library System==="
@@ -24,6 +24,8 @@ public class Main {
 				+ "\n5. Librarian"
 				+ "\n6. Not a member *register*"
 				+ "\n99. Testa databas");
+
+		// Input val
 		System.out.print("\n[Input your choice here]: ");
 		//int initChoice = scanner.nextInt();
 		int initChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur vanliga scanner läste
@@ -342,19 +344,12 @@ public class Main {
 					System.out.print("Enter the members social security number: ");
 					Long ssn = scanner.nextLong();
 
-					Member member = new Member(1239, fName, lName, 1, ssn, 0, 0, false, null);
+					Member member = new Member(1239, fName, lName, 1, ssn, 0, 0, false, null); // Behöver uppdatera id manuellt så det är unikt om det inte löses på annat sätt
 					DB.addMember(member);
 					System.out.println("\nLibrarian - You " + "'" + fName + "'" + " have successfully been added as a member at the library!"
 					+ "\nLibrarian - You can now start using the system!");
-
 					// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
 					// Kolla om personnummer redan finns i databas innan lägga till
-
-					/*
-					Lägg till information
-					Lägg till ny medlem i databas
-					Skicka tillbaks till main (kör om programmet) - skriv meddelande att medlem kommer skickas till main
-					 */
 					break;
 
 				case 2 :
@@ -371,6 +366,7 @@ public class Main {
 			System.out.println("\nLibrarian - Ok, so you would like to become a member"
 					+ "\nLibrarian - Then, I would like to get your information");
 
+			// Input details
 			System.out.print("\nType your first name: ");
 			String fName = scanner.nextLine();
 
@@ -380,10 +376,10 @@ public class Main {
 			System.out.print("Type your social security number: ");
 			Long ssn = scanner.nextLong();
 
-			Member member = new Member(1233, fName, lName, 1, ssn, 0, 0, false, null);
+			// Add member based on input
+			Member member = new Member(1233, fName, lName, 1, ssn, 0, 0, false, null); // Behöver uppdatera id manuellt så det är unikt om det inte löses på annat sätt
 			DB.addMember(member);
 			System.out.println("You " + "'" + fName + "'" + " have successfully been added as a member at the library!");
-
 			// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
 			// Kolla om personnummer redan finns i databas innan lägga till
 
@@ -398,7 +394,7 @@ public class Main {
 
 
 
-		// [8. Testa databas]===========================================================================================
+		// [99. Testa databas]===========================================================================================
 		} if(initChoice == 99) {
 			DbLibraryStore dbstore = new DbLibraryStore();
 
