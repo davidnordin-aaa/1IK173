@@ -23,7 +23,7 @@ public class Main {
 				+ "\n4. Teacher"
 				+ "\n5. Librarian"
 				+ "\n6. Not a member *register*"
-				+ "\n10. Testa databas");
+				+ "\n99. Testa databas");
 		System.out.print("\n[Input your choice here]: ");
 		//int initChoice = scanner.nextInt();
 		int initChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur vanliga scanner läste
@@ -329,17 +329,17 @@ public class Main {
 					* Om personnummer redan är registrerad och hen inte har brutit mot regler: händer inget (printa meddelande till bibliotekarie att allt är okej)
 					* Om personnummer inte hittas i databas: personens information (fnamn, enamn, personmr) registreras och personen får ett unikt ID
 			 		*/
-					System.out.println("\nLibrarian - Ok, so you would like to become a member"
-							+ "\nLibrarian - Then, I would like to get your information");
+					System.out.println("\nSystem - Ok, so you would like to become a member"
+							+ "\nSystem - Then, I would like to get your information");
 
 					scanner.nextLine();
-					System.out.print("\nType your first name: ");
+					System.out.print("\nEnter the members first name: ");
 					String fName = scanner.nextLine();
 
-					System.out.print("Type your last name: ");
+					System.out.print("Enter the members last name: ");
 					String lName = scanner.nextLine();
 
-					System.out.print("Type your social security number: ");
+					System.out.print("Enter the members social security number: ");
 					Long ssn = scanner.nextLong();
 
 					Member member = new Member(1239, fName, lName, 1, ssn, 0, 0, false, null);
@@ -382,7 +382,7 @@ public class Main {
 
 			Member member = new Member(1233, fName, lName, 1, ssn, 0, 0, false, null);
 			DB.addMember(member);
-			System.out.println("You " + fName + " have successfully been added as a member at the library!");
+			System.out.println("You " + "'" + fName + "'" + " have successfully been added as a member at the library!");
 
 			// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
 			// Kolla om personnummer redan finns i databas innan lägga till
@@ -399,7 +399,7 @@ public class Main {
 
 
 		// [8. Testa databas]===========================================================================================
-		} if(initChoice == 8) {
+		} if(initChoice == 99) {
 			DbLibraryStore dbstore = new DbLibraryStore();
 
 			// 1. Setup database and initial books
