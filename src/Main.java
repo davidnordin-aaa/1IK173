@@ -40,17 +40,24 @@ public class Main {
 			System.out.print("Librarian - Please identify yourself to grant member access by providing your ID: "); // Om tid finns förfina med input your choice here (nedanför raden)
 			String inputId = scanner.nextLine();
 
+			if(DB.getMember(inputId) == null) {
+				System.out.println("Couldn't find member, register");
+				scanner.nextLine();
+				main(null);
+			}
+
 			// Menu title
 			System.out.println(
 					"\n----------------------------------------------"
 					+ "\nSelect from the list what would you like to do"
 					+ "\n----------------------------------------------");
 
-			// Choose option from menu list
+			// Menu list
 			System.out.println(
 					"1. Lend book"
 					+ "\n2. Return book");
 
+			// Choice from menu list
 			System.out.print("[Input your choice here]: ");
 			int undergraduateChoice = scanner.nextInt();
 			//int undergraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
@@ -90,10 +97,20 @@ public class Main {
 					break;
 
 				case 2 : // Return book
+					System.out.print("ID: "); // Ask and input ID
+					int memberIdReturn = scanner.nextInt();
+					scanner.nextLine();
+
+					System.out.print("ISBN: "); // Ask and input ISBN
+					String isbnReturn = scanner.nextLine();
+
+					svc.returnBook(memberIdReturn, isbnReturn);
+					/*
 					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
 					System.out.print("[Input your ID here]: ");
 					int inputtedId = scanner.nextInt();
 					// Uppdatera medlems antal lånade böcker (just nu) och tillgängligt bokantal i biblioteket
+					 */
 					break;
 			}
 
@@ -118,6 +135,7 @@ public class Main {
 					"1. Lend book"
 							+ "\n2. Return book");
 
+			// Input choice from menu
 			System.out.print("[Input your choice here]: ");
 			int postgraduateChoice = scanner.nextInt();
 			//int postgraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
