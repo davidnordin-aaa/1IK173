@@ -65,7 +65,7 @@ public class Main {
 							+ "\n---------------------------------"
 							+ "\n[Enter ISBN here]: ");
 					scanner.nextLine();
-					String isbnItem = scanner.nextLine();
+					int isbnItem = scanner.nextInt();
 
 					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"

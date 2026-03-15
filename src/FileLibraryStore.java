@@ -51,29 +51,29 @@ public class FileLibraryStore implements ILibraryStore {
 
 	}
 
-	@Override
 	public boolean canMemberBorrow(String memberId) {
 		return false;
 	}
 
-	@Override
 	public boolean returnItem(String memberId, int isbn) {
 		return false;
 	}
 
-	@Override
 	public Long lendItem(String memberId, int isbn) {
 		return 0L;
 	}
 
-	@Override
 	public Loan getLoan(long loanId) {
 		return null;
 	}
 
-	@Override
 	public void addLibraryItem(int isbn) {
 
+	}
+
+
+	public boolean isAlreadyBorrowed(int isbn) {
+		return false;
 	}
 
 

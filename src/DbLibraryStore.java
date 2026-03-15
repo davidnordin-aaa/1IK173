@@ -85,17 +85,22 @@ public class DbLibraryStore implements ILibraryStore {
 			//logger.error("Database initialization failed: {}", e.getMessage());
 		}
 	}
-	@Override
-	public void addLibraryItem(int isbn) {
-		String sql = "INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (?, TRUE)";
+
+
+	public boolean isAlreadyBorrowed(int isbn) {
+		//String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";
+		String sql = "SELECT 1 FROM LIBRARYITEMS WHERE COPY_ID = ? AND IS_AVAILABLE = FALSE";
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, isbn);
-			pstmt.executeUpdate();
+			ResultSet rs = pstmt.executeQuery();
+			return rs.next();
 		} catch (SQLException e) {
 			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Error adding library item: " + e.getMessage());
+			System.out.println("Transaction failed, rolling back: " + e.getMessage());
+			// Handle database error
 		}
+		return false;
 	}
 
 	public void clearDatabase() {
@@ -115,7 +120,65 @@ public class DbLibraryStore implements ILibraryStore {
 			e.printStackTrace();
 		}
 	}
-	@Override
+
+	private void updateSuspensionStatus(String id, boolean status, LocalDate endDate) {
+		String sql = "UPDATE MEMBERS SET IS_SUSPENDED = ?, SUSPENSION_END_DATE = ? WHERE ID = ?";
+		try (Connection conn = this.connect();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setBoolean(1, status);
+			pstmt.setDate(2, endDate != null ? Date.valueOf(endDate) : null);
+			pstmt.setString(3, id);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println("Error updating suspension status: " + e.getMessage());
+		}
+	}
+
+	private Book mapBook(ResultSet rs) throws SQLException {
+		return new Book(
+				rs.getString("TITLE"),
+				rs.getInt("ISBN"),
+				rs.getString("AUTHOR"),
+				rs.getInt("PUBLICATIONYEAR")
+		);
+	}
+
+	private Loan mapLoan(ResultSet rs) throws SQLException {
+		return new Loan(
+				rs.getLong("LOAN_ID"),
+				rs.getInt("MEMBER_ID"),
+				rs.getInt("COPY_ID"),
+				rs.getDate("LOAN_DATE"),
+				rs.getDate("DUE_DATE")
+		);
+	}
+
+	private Member mapMember(ResultSet rs) throws SQLException {
+		return new Member(
+				rs.getInt("ID"),
+				rs.getString("FIRST_NAME"),
+				rs.getString("LAST_NAME"),
+				rs.getInt("MEMBER_TYPE"),
+				rs.getLong("SSN"),
+				rs.getInt("DELAYED_RETURNS_COUNTER"),
+				rs.getInt("SUSPENSION_COUNTER"),
+				rs.getBoolean("IS_SUSPENDED"),
+				rs.getDate("SUSPENSION_END_DATE")
+		);
+	}
+
+	public void addLibraryItem(int isbn) {
+		String sql = "INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (?, TRUE)";
+		try (Connection conn = this.connect();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, isbn);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace(); // This will print the exact SQL error to your test console
+			System.out.println("Error adding library item: " + e.getMessage());
+		}
+	}
+
 	public Loan getLoan(long loanId) {
 		String sql = "SELECT * FROM LOANS WHERE LOAN_ID = ?";
 		try (Connection conn = this.connect();
@@ -138,7 +201,7 @@ public class DbLibraryStore implements ILibraryStore {
 		}
 		return null;
 	}
-	@Override
+
 	public Long lendItem(String memberId, int isbn) {
 		String findItemSql = "SELECT COPY_ID FROM LIBRARYITEMS WHERE ISBN = ? AND IS_AVAILABLE = TRUE LIMIT 1";
 		String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";
@@ -159,7 +222,7 @@ public class DbLibraryStore implements ILibraryStore {
 						updateStmt.executeUpdate();
 					}
 
-					// Explicitly request LOAN_ID to fix H2 return keys issue
+					// Explicitly request LOAN_ID
 					try (PreparedStatement insertStmt = conn.prepareStatement(insertLoanSql, new String[]{"LOAN_ID"})) {
 						insertStmt.setString(1, memberId);
 						insertStmt.setLong(2, copyId);
@@ -189,7 +252,8 @@ public class DbLibraryStore implements ILibraryStore {
 		}
 		return -1L; // Item not available or error occurred
 	}
-	@Override
+
+
 	public boolean returnItem(String memberId, int isbn) {
 		String findLoanSql = "SELECT l.LOAN_ID, l.COPY_ID, l.DUE_DATE FROM LOANS l " +
 				"JOIN LIBRARYITEMS i ON l.COPY_ID = i.COPY_ID " +
@@ -247,7 +311,7 @@ public class DbLibraryStore implements ILibraryStore {
 		}
 		return false; // Loan record not found or error occurred
 	}
-	@Override
+
 	public boolean canMemberBorrow(String memberId) {
 		String sql = "SELECT m.MEMBER_TYPE, COUNT(l.LOAN_ID) as active_loans " +
 				"FROM MEMBERS m LEFT JOIN LOANS l ON m.ID = l.MEMBER_ID " +
@@ -277,19 +341,25 @@ public class DbLibraryStore implements ILibraryStore {
 		return false;
 	}
 
-	private void updateSuspensionStatus(String id, boolean status, LocalDate endDate) {
-		String sql = "UPDATE MEMBERS SET is_suspended = ?, suspension_end_date = ? WHERE id = ?";
-		try (Connection conn = this.connect();
-			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setBoolean(1, status);
-			pstmt.setDate(2, endDate != null ? Date.valueOf(endDate) : null);
-			pstmt.setString(3, id);
-			pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			//logger.error("Failed to update suspension status for {}: {}", id, e.getMessage());
+	private String generateUniqueId(Connection conn) throws SQLException {
+		String query = "SELECT ID FROM MEMBERS";
+		java.util.Set<String> existingIds = new java.util.HashSet<>();
+
+		try (Statement stmt = conn.createStatement();
+			 ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				existingIds.add(rs.getString("ID"));
+			}
 		}
+
+		// Attempt to find a unique 4-digit number (0001 - 9999)
+		for (int i = 1; i <= 9999; i++) {
+			String candidateId = String.format("%04d", i);
+			if (!existingIds.contains(candidateId)) {
+				return candidateId;
+			}
+		}
+		throw new SQLException("No unique IDs available in the 4-digit range.");
 	}
 
 	@Override
@@ -298,11 +368,10 @@ public class DbLibraryStore implements ILibraryStore {
 
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-			pstmt.setInt(1, newBook.ISBN);
-			pstmt.setString(2, newBook.title);
-			pstmt.setString(3, newBook.author);
-			pstmt.setInt(4, newBook.year);
+			pstmt.setInt(1, newBook.getISBN());
+			pstmt.setString(2, newBook.getTitle());
+			pstmt.setString(3, newBook.getAuthor());
+			pstmt.setInt(4, newBook.getYear());
 			pstmt.executeUpdate();
 			//logger.info("Title '{}' added to database.", newBook.title);
 		} catch (SQLException e) {
@@ -314,123 +383,100 @@ public class DbLibraryStore implements ILibraryStore {
 
 	@Override
 	public void addMember(Member newMember) {
-		String sql = "INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN) VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN, " +
+				"DELAYED_RETURNS_COUNTER, SUSPENSION_COUNTER, IS_SUSPENDED, SUSPENSION_END_DATE) " +
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-		try (Connection conn = this.connect();
-			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (Connection conn = this.connect()) {
+			//generate unique 4-digit ID
+			String uniqueId = generateUniqueId(conn);
 
-			pstmt.setString(1, String.valueOf(newMember.Id));
-			pstmt.setString(2, newMember.FirstName);
-			pstmt.setString(3, newMember.LastName);
-			pstmt.setInt(4, newMember.MemberType);
-			pstmt.setLong(5, newMember.Ssn); // Using Long to prevent SSN overflow
-			pstmt.executeUpdate();
-			//logger.info("Member {} registered successfully.", newMember.Id);
+			//default values for new members
+			int initialDelayedReturns = 0;
+			int initialSuspensionCounter = 0;
+			boolean initialSuspensionStatus = false;
+			Date initialSuspensionEndDate = null;
+
+			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+				pstmt.setString(1, uniqueId);
+				pstmt.setString(2, newMember.getFirstName());
+				pstmt.setString(3, newMember.getLastName());
+				pstmt.setInt(4, newMember.getMemberType());
+				pstmt.setLong(5, newMember.getSsn());
+				pstmt.setInt(6, initialDelayedReturns);
+				pstmt.setInt(7, initialSuspensionCounter);
+				pstmt.setBoolean(8, initialSuspensionStatus);
+				pstmt.setNull(9, Types.DATE); // Suspension end date is null for new members
+
+				pstmt.executeUpdate();
+
+				// Optionally update the object with the generated ID
+				newMember.Id = Integer.parseInt(uniqueId);
+			}
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Database error: " + e.getMessage());
+			System.err.println("Database error during member registration: " + e.getMessage());
 		}
 	}
 
 	@Override
 	public Book getBook(String id) {
-		String sql = "SELECT * FROM books WHERE isbn = ?";
-		Book book = new Book();
-
+		String sql = "SELECT * FROM BOOKS WHERE ISBN = ?";
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
 			pstmt.setInt(1, Integer.parseInt(id));
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				book.title = rs.getString("title");
-				book.author = rs.getString("author");
-				book.year = rs.getInt("publicationyear");
-				book.ISBN = rs.getInt("isbn");
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return mapBook(rs);
+				}
 			}
-		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			//logger.error("Error retrieving book {}: {}", isbn, e.getMessage());
+		} catch (SQLException | NumberFormatException e) {
+			System.err.println("Error retrieving book: " + e.getMessage());
 		}
-		return book;
+		return null;
 	}
 
 	@Override
 	public Member getMember(String id) {
-		String sql = "SELECT * FROM Members WHERE id = ?";
-
+		String sql = "SELECT * FROM MEMBERS WHERE ID = ?";
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
 			pstmt.setInt(1, Integer.parseInt(id));
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				Member member = new Member();
-				member.Id = rs.getInt("id");
-				member.FirstName = rs.getString("first_name");
-				member.LastName = rs.getString("last_name");
-				member.MemberType = rs.getInt("member_type");
-				member.Ssn = rs.getLong("ssn");
-				member.DelayedReturnsCounter = rs.getInt("delayed_returns_counter");
-				member.SuspensionCounter = rs.getInt("suspension_counter");
-				member.IsSuspended = rs.getBoolean("is_suspended");
-				member.SuspensionEndDate = rs.getDate("suspension_end_date");
-
-				return member;
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return mapMember(rs);
+				}
 			}
-		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			//logger.error("Error retrieving member {}: {}", id, e.getMessage());
+		} catch (SQLException | NumberFormatException e) {
+			System.err.println("Error retrieving member: " + e.getMessage());
 		}
 		return null;
 	}
 
 	@Override
 	public boolean isSuspendedMember(String id) {
-		String sql = "SELECT is_suspended, suspension_end_date FROM MEMBERS WHERE id = ?";
-		try (Connection conn = this.connect();
-			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		Member member = getMember(id);
+		if (member == null) return false;
 
-			pstmt.setInt(1, Integer.parseInt(id));
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				boolean isSuspended = rs.getBoolean("is_suspended");
-				Date endDate = rs.getDate("suspension_end_date");
-
-				if (isSuspended && endDate != null && endDate.before(Date.valueOf(LocalDate.now()))) {
-					updateSuspensionStatus(id, false, null);
-					return false;
-				}
-				return isSuspended;
+		if (member.isSuspended()) {
+			Date endDate = (Date) member.getSuspensionEndDate();
+			if (endDate != null && endDate.before(Date.valueOf(LocalDate.now()))) {
+				updateSuspensionStatus(id, false, null);
+				return false;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			//logger.error("Error checking suspension for {}: {}", id, e.getMessage());
+			return true;
 		}
 		return false;
 	}
 
 	@Override
 	public void removeMember(String id) {
-		String sql = "DELETE FROM MEMBERS WHERE id = ?";
+		String sql = "DELETE FROM MEMBERS WHERE ID = ?";
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
 			pstmt.setString(1, id);
-			int affectedRows = pstmt.executeUpdate();
-			if (affectedRows > 0) {
-				//logger.info("Account for member {} has been deleted.", id);
-			}
+			pstmt.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			//logger.error("Error removing member {}: {}", id, e.getMessage());
+			System.err.println("Error removing member: " + e.getMessage());
 		}
 	}
 
@@ -439,27 +485,20 @@ public class DbLibraryStore implements ILibraryStore {
 		String updateSql = "UPDATE MEMBERS SET IS_SUSPENDED = TRUE, " +
 				"SUSPENSION_COUNTER = SUSPENSION_COUNTER + 1, " +
 				"SUSPENSION_END_DATE = ? WHERE ID = ?";
-
 		try (Connection conn = this.connect()) {
-			LocalDate endDate = LocalDate.now().plusDays(15);
+			Date endDate = Date.valueOf(LocalDate.now().plusDays(15));
 			try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
-				pstmt.setDate(1, Date.valueOf(endDate));
+				pstmt.setDate(1, endDate);
 				pstmt.setString(2, id);
 				pstmt.executeUpdate();
 			}
 
-			// Check for deletion requirement
-			Member m = getMember(id);
-			if (m.SuspensionCounter > 2) {
-				//logger.warn("Member {} exceeded 2 suspensions. Deleting account.", id);
+			Member updatedMember = getMember(id);
+			if (updatedMember != null && updatedMember.getSuspensionCounter() > 2) {
 				removeMember(id);
-			} else {
-				//logger.info("Member {} suspended until {}", id, endDate);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			//logger.error("Suspension logic failed: {}", e.getMessage());
+			System.err.println("Error during member suspension: " + e.getMessage());
 		}
 	}
 }
