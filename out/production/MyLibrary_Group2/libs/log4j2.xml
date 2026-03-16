@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration  monitorInterval="5">
+<Configuration  monitorInterval="1">
 
 	<Appenders>
-		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		<Console name="abc123" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} [%threadId] %-5level %logger - %m%n" />
 		</Console>
-
-		<File name="DbLogFile" fileName="logs/db_activity.log">
+     <File name="MyFile" fileName="logs/app.log">
       <PatternLayout>
-		  <Pattern>%d %p %c [%t] %m%n</Pattern>
+        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
       </PatternLayout>
     </File>
 	</Appenders>
 	
 	<Loggers>
 		<Root level="debug">
-			<AppenderRef ref="Console" />
-			<AppenderRef ref="DbLogFile" level="trace"/>
+			<AppenderRef ref="abc123" />
+			<AppenderRef ref="MyFile" />
 		</Root>
 	</Loggers>
 	

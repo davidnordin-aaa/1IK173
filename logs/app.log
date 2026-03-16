@@ -1,0 +1,14 @@
+2026-03-16 17:29:29,846 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1
+2026-03-16 17:29:29,859 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1
+2026-03-16 17:31:54,528 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 1
+2026-03-16 17:31:54,538 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 1
+2026-03-16 17:32:22,350 DEBUG DbLibraryStore [main] Processing return for ISBN 238103 from member 1
+2026-03-16 17:32:22,362 INFO DbLibraryStore [main] Item 238103 successfully returned by member 1
+2026-03-16 17:33:31,752 ERROR DbLibraryStore [main] Error removing member: Referential integrity constraint violation: "FK_MEMBER_ID: PUBLIC.LOANS FOREIGN KEY(MEMBER_ID) REFERENCES PUBLIC.MEMBERS(ID) (1)"; SQL statement:
+DELETE FROM MEMBERS WHERE ID = ? [23503-240]
+2026-03-16 17:34:35,734 DEBUG DbLibraryStore [main] Processing return for ISBN 102938 from member 1
+2026-03-16 17:34:35,744 INFO DbLibraryStore [main] Item 102938 successfully returned by member 1
+2026-03-16 17:54:08,406 ERROR DbLibraryStore [main] Error adding member: Unique index or primary key violation: "PUBLIC.CONSTRAINT_63 INDEX PUBLIC.CONSTRAINT_63_INDEX_8 ON PUBLIC.MEMBERS(SSN NULLS FIRST) VALUES ( /* 4 */ CAST(123456789 AS BIGINT) )"; SQL statement:
+INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN, DELAYED_RETURNS_COUNTER, SUSPENSION_COUNTER, IS_SUSPENDED, SUSPENSION_END_DATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) [23505-240]
+2026-03-16 18:15:46,215 ERROR DbLibraryStore [main] Error adding member: Unique index or primary key violation: "PUBLIC.CONSTRAINT_63_INDEX_8 ON PUBLIC.MEMBERS(SSN NULLS FIRST) VALUES ( /* 14 */ CAST(6 AS BIGINT) )"; SQL statement:
+INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN, DELAYED_RETURNS_COUNTER, SUSPENSION_COUNTER, IS_SUSPENDED, SUSPENSION_END_DATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) [23505-240]
