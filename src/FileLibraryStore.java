@@ -51,6 +51,10 @@ public class FileLibraryStore implements ILibraryStore {
 
 	}
 
+	public int isAlreadyBorrowed(String memberId, int isbn) {
+		return 0;
+	}
+
 	public boolean canMemberBorrow(String memberId) {
 		return false;
 	}
