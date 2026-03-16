@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.sql.*;
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class LibraryServiceMockitoTest {

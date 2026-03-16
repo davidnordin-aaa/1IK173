@@ -81,3 +81,23 @@ INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN, DELAYED_RETURN
 2026-03-16 20:14:31,765 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 174213) to member 1007
 2026-03-16 20:14:52,727 DEBUG DbLibraryStore [main] Attempting to lend ISBN 754247 to member ID 1007
 2026-03-16 20:14:52,762 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 754247) to member 1007
+2026-03-16 20:27:37,823 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1000
+2026-03-16 20:27:37,837 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
+2026-03-16 20:28:11,669 DEBUG DbLibraryStore [main] Attempting to lend ISBN 114267 to member ID 1000
+2026-03-16 20:28:11,675 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 114267) to member 1000
+2026-03-16 20:28:24,348 DEBUG DbLibraryStore [main] Attempting to lend ISBN 146123 to member ID 1000
+2026-03-16 20:28:24,354 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 146123) to member 1000
+2026-03-16 20:41:27,221 DEBUG DbLibraryStore [main] Processing return for ISBN 114267 from member 1000
+2026-03-16 20:41:27,233 INFO DbLibraryStore [main] Item 114267 successfully returned by member 1000
+2026-03-16 20:42:09,546 DEBUG DbLibraryStore [main] Processing return for ISBN 102938 from member 1000
+2026-03-16 20:42:09,561 INFO DbLibraryStore [main] Item 102938 successfully returned by member 1000
+2026-03-16 20:42:30,397 DEBUG DbLibraryStore [main] Processing return for ISBN 146123 from member 1000
+2026-03-16 20:42:30,403 INFO DbLibraryStore [main] Item 146123 successfully returned by member 1000
+2026-03-16 20:56:11,697 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 1000
+2026-03-16 20:56:11,708 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 1000
+2026-03-16 20:56:27,039 DEBUG DbLibraryStore [main] Processing return for ISBN 238103 from member 1000
+2026-03-16 20:56:27,045 INFO DbLibraryStore [main] Item 238103 successfully returned by member 1000
+2026-03-16 20:58:18,516 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1000
+2026-03-16 20:58:18,528 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
+2026-03-16 20:58:28,994 DEBUG DbLibraryStore [main] Processing return for ISBN 102938 from member 1000
+2026-03-16 20:58:29,000 INFO DbLibraryStore [main] Item 102938 successfully returned by member 1000

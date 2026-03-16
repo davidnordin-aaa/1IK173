@@ -53,9 +53,10 @@ public class LibraryService {
 	public boolean executeReturn(String memberId, int isbn) {
 		int loanID = store.isAlreadyBorrowed(memberId, isbn);
 		if(store.isSuspendedMember(memberId)) {
-			if (loanID > 0) {
-				return store.returnItem(memberId, isbn);
-			}
+			return false;
+		}
+		if (loanID > 0) {
+			return store.returnItem(memberId, isbn);
 		}
 		return false;
 	}

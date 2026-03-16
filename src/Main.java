@@ -124,6 +124,8 @@ public class Main {
 					System.out.println("\nLibrarian - Ok so you would like to delete your account?. \nLibrarian - Can I have your ID?");
 					String deletionID = scanner.nextLine();
 					svc.requestDeletion(deletionID);
+					System.out.println("Your account has been removed. Press enter to return to main screen");
+					scanner.nextLine();
 					main(null);
 					break;
 			}
