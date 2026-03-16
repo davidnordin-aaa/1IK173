@@ -9,7 +9,7 @@ public class LibraryService {
 		this.store = store;
 	}
 
-	public boolean borrow(int isbn, String memberId) {
+	public boolean borrow(int isbn, String memberId, int initChoice) {
 		boolean status = false;
 		Scanner scanner = new Scanner(System.in);
 		Member memberInfo = store.getMember(memberId);
@@ -25,15 +25,16 @@ public class LibraryService {
 			Loan newLoan = executeLoan(memberId,isbn);
 			if (newLoan == null){
 				System.out.println("We couldnt borrow that book because it is already loaned to another person.");
+				Main.loggedIn(initChoice);
 			}
 			else{
 				System.out.println("You are now the proud owner of "+ book.title+ " until " + newLoan.DueDate +"." + "\nPress enter to go back to main screen");
-				Main.main(null);
+				Main.loggedIn(initChoice);
 			}
 		}
 		else{
 			System.out.println("We couldnt find that book, please double check your search.");
-			Main.main(null);
+			Main.loggedIn(initChoice);
 		}
 
 		return status;
@@ -41,7 +42,7 @@ public class LibraryService {
 
 
 	}
-	public boolean returnBook(int isbn, String memberId) {
+	public boolean returnBook(int isbn, String memberId, int initchoice) {
 		boolean status = false;
 		Scanner scanner = new Scanner(System.in);
 		Member memberInfo = store.getMember(memberId);
@@ -61,12 +62,12 @@ public class LibraryService {
 			else{
 				System.out.println("You have now returned "+ book.title+ "." + "\nPress enter to go back to main screen");
 				scanner.nextLine();
-				Main.main(null);
+				Main.loggedIn(initchoice);
 			}
 		}
 		else{
 			System.out.println("We couldnt find that book, please double check your search.");
-			Main.main(null);
+			Main.loggedIn(initchoice);
 		}
 		return status;
 
@@ -93,12 +94,12 @@ public class LibraryService {
 		}
 		return newReturn;
 	}
-	public boolean requestDeletion(String memberID){
+	public void requestDeletion(String memberID){
 		DbLibraryStore DB = new DbLibraryStore();
 		 try {
 			 DB.removeMember(memberID);
 			 if(DB.getMember(memberID) == null){
-				System.out.println("Your account has been removed.");
+				System.out.println("Your account has been removed. Press Enter to go back: ");
 			 }
 			 else{
 				 throw new Exception();
@@ -107,7 +108,7 @@ public class LibraryService {
 		 catch (Exception e){
 			 System.out.println("We could not remove your account. Double check if you have unreturned books!");
 		 }
-		return false;
+		 Main.main(null);
 	}
 
 }

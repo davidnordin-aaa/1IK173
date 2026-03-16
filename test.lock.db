@@ -1,0 +1,6 @@
+#FileLock
+#Mon Mar 16 16:15:33 UTC 2026
+hostName=Fiskens_PC
+id=19cf76e5f19b74f633388d8b4ba20b17123fd5548db
+method=file
+server=192.168.1.239\:60073
