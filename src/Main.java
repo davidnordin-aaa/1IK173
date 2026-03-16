@@ -1,3 +1,5 @@
+import org.apache.logging.log4j.core.pattern.IntegerPatternConverter;
+
 import java.util.Date;
 import java.util.Scanner;
 
@@ -40,6 +42,13 @@ public class Main {
 			System.out.print("Librarian - Please identify yourself to grant member access by providing your ID: "); // Om tid finns förfina med input your choice here (nedanför raden)
 			String inputId = scanner.nextLine();
 
+			// Verifying ID
+			if(DB.getMember(inputId) == null) {
+				System.out.println("Couldn't find member, register");
+				scanner.nextLine(); // Klicka enter för att komma tillbaks till main
+				main(null);
+			}
+
 			// Menu title
 			System.out.println(
 					"\n----------------------------------------------"
@@ -74,10 +83,10 @@ public class Main {
 
 					// Input ID
 					System.out.print("[Input your ID for confirmation here]: ");
-					int studentId = Integer.parseInt(scanner.nextLine());
+					String studentId = scanner.nextLine();
 
 					// Kalla på borrow-metod i LibraryService
-					svc.borrow(isbnItem, inputId);
+					svc.borrow(isbnItem, studentId);
 
 					// Kolla typ av medlem med ID
 					// Kolla antal böcker medlem lånat tidigare (finns begränsning)
@@ -382,8 +391,14 @@ public class Main {
 			System.out.print("Type your social security number: ");
 			Long ssn = Long.parseLong(scanner.nextLine());
 
+			System.out.print("\nSelect from the list what member are you registering as: "
+			+ "\n--------------------------------------------------------"
+			+ "\n1. Postgraduate student" + "\n2. PhD student" + "\n3. Teacher");
+			System.out.print("\n[Input choice here]: ");
+			int memberType = Integer.parseInt(scanner.nextLine());
+
 			// Add member
-			Member member = new Member(0, fName, lName, 1, ssn, 0, 0, false, null);
+			Member member = new Member(0, fName, lName, memberType, ssn, 0, 0, false, null);
 			DB.addMember(member);
 			System.out.println("You " + "'" + fName + "'" + " have successfully been added as a member at the library!");
 			// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
