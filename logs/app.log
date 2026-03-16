@@ -101,3 +101,7 @@ INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN, DELAYED_RETURN
 2026-03-16 20:58:18,528 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
 2026-03-16 20:58:28,994 DEBUG DbLibraryStore [main] Processing return for ISBN 102938 from member 1000
 2026-03-16 20:58:29,000 INFO DbLibraryStore [main] Item 102938 successfully returned by member 1000
+2026-03-16 21:27:10,138 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1000
+2026-03-16 21:27:10,177 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
+2026-03-16 21:27:24,719 DEBUG DbLibraryStore [main] Processing return for ISBN 102938 from member 1000
+2026-03-16 21:27:24,756 INFO DbLibraryStore [main] Item 102938 successfully returned by member 1000
