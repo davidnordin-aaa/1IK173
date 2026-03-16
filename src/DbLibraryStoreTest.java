@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import java.sql.*;
 import java.util.Date;
+import java.io.File;
 
 public class DbLibraryStoreTest {
     private DbLibraryStore store;
@@ -47,6 +48,44 @@ public class DbLibraryStoreTest {
             e.printStackTrace();
         }
         store.initializeData(); // Ensure tables and sample books exist
+    }
+
+    @Test
+    void testLogFileExists(){
+        File logFile = new File("logs/db_activity.log");
+        assertTrue(logFile.exists(), "The log file 'logs/db_activity.log' should be created by Log4j2");
+    }
+
+    @Test
+    void testLoggingForAccountDeletion(){
+        Member testMember = new Member(0, "Jane", "Doe", 1, 8888L, 0, 0, false, null);
+        store.addMember(testMember);
+        String memberId = String.format("%04d", testMember.getId());
+
+        //trigger multiple suspensions for deletion
+        store.suspendMember(memberId);
+        store.suspendMember(memberId);
+        store.suspendMember(memberId);
+
+        Member deletedMember = store.getMember(memberId);
+        assertNull(deletedMember, "Member should be deleted after 3 suspensions.");
+        // Manual Check: Look for "FATAL" in db_activity.log or console
+    }
+
+    @Test
+    void testLoggingBorrowLimitExceeded() {
+        Member undergrad = new Member(0, "Student", "One", 1, 1234L, 0, 0, false, null);
+        store.addMember(undergrad);
+        String memberId = String.format("%04d", undergrad.getId());
+
+        // Act: Fill the quota
+        int isbn = 102938; // 1984
+        store.lendItem(memberId, isbn);
+        store.lendItem(memberId, isbn);
+        store.lendItem(memberId, isbn);
+
+        assertFalse(store.canMemberBorrow(memberId), "Undergraduate cannot borrow more than 3 items.");
+        // Manual Check: Look for logger statements regarding borrowing checks in console
     }
 
     @Test

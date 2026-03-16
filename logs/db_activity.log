@@ -1,0 +1,47 @@
+2026-03-16 15:17:55,403 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 15:17:55,463 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 15:17:55,474 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 15:17:56,081 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 15:17:56,126 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 15:17:56,141 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 15:17:56,268 INFO DbLibraryStore [main] Title 'Test Driven Development' added to database.
+2026-03-16 15:17:56,458 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 15:17:56,507 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 15:17:56,512 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 15:17:56,757 DEBUG DbLibraryStore [main] Attempting to lend ISBN 174213 to member ID 0001
+2026-03-16 15:17:56,824 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 174213) to member 0001
+2026-03-16 15:17:56,996 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 15:17:57,053 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 15:17:57,058 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 15:17:57,225 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 15:17:57,283 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 15:17:57,285 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 15:17:57,383 INFO DbLibraryStore [main] Title 'Test Book' added to database.
+2026-03-16 15:17:57,579 DEBUG DbLibraryStore [main] Attempting to lend ISBN 999999 to member ID 0001
+2026-03-16 15:17:57,643 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 999999) to member 0001
+2026-03-16 15:17:57,665 DEBUG DbLibraryStore [main] Processing return for ISBN 999999 from member 0001
+2026-03-16 15:17:57,716 INFO DbLibraryStore [main] Item 999999 successfully returned by member 0001
+2026-03-16 15:17:57,853 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 15:17:57,904 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 15:17:57,906 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 15:17:58,403 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 15:17:58,453 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 15:17:58,462 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 15:17:58,937 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 0001
+2026-03-16 15:17:59,002 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 0001
+2026-03-16 15:17:59,022 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 0001
+2026-03-16 15:17:59,081 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 0001
+2026-03-16 15:17:59,103 DEBUG DbLibraryStore [main] Attempting to lend ISBN 146123 to member ID 0001
+2026-03-16 15:17:59,151 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 146123) to member 0001
+2026-03-16 15:17:59,296 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 15:17:59,353 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 15:17:59,355 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 15:17:59,487 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 0001
+2026-03-16 15:17:59,530 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 0001
+2026-03-16 15:17:59,551 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 0001
+2026-03-16 15:17:59,616 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 0001
+2026-03-16 15:17:59,635 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 0001
+2026-03-16 15:17:59,677 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 0001
+2026-03-16 15:17:59,840 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 15:17:59,899 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 15:17:59,900 INFO DbLibraryStore [main] Database seeding successful
