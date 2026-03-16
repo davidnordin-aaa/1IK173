@@ -1,11 +1,9 @@
-import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
 
 	public static void main(String[] args) {
 
-		//ILibraryStore store = new FileLibraryStore("myfilename.txt");
 		ILibraryStore store = new DbLibraryStore();
 		LibraryService svc = new LibraryService(store);
 		DbLibraryStore DB = new DbLibraryStore();
@@ -17,20 +15,14 @@ public class Main {
 						+ "\n   ===Welcome to the Library System==="
 						+ "\n-----------------------------------------"
 						+ "\nWho are you or what would you want to do?"
-						+ "\n\n1. Undergraduate student"
-						+ "\n2. Postgraduate student"
-						+ "\n3. PhD student"
-						+ "\n4. Teacher"
-						+ "\n5. Librarian"
-						+ "\n6. Not a member (register)");
+						+ "\n\n1. Member"
+						+ "\n2. Librarian"
+						+ "\n3. Not a member (register)");
 
 		// Input val
 		System.out.print("\n[Input your choice here]: ");
-		//int initChoice = scanner.nextInt();
-		int initChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur vanliga scanner läste
+		int initChoice = Integer.parseInt(scanner.nextLine());
 		loggedIn(initChoice);
-
-
 	}
 
 	public static void loggedIn(int initChoice) {
@@ -39,23 +31,18 @@ public class Main {
 		DbLibraryStore DB = new DbLibraryStore();
 		Scanner scanner = new Scanner(System.in);
 
-		// [1. Undergraduate]===========================================================================================
+		// [1. Member]===========================================================================================
 		if (initChoice == 1) {
-			int studentRole = initChoice;
+			System.out.println("\nLibrarian - Welcome to the library");
 
-			System.out.println("\nLibrarian - Okay, so you're an undergraduate student");
-
-			// Input ID
-			System.out.print("Librarian - Please identify yourself to grant member access by providing your ID: "); // Om tid finns förfina med input your choice here (nedanför raden)
+			System.out.print("Librarian - Please identify yourself to grant member access by providing your ID: ");
 			String inputId = scanner.nextLine();
 
-			// Menu title
 			System.out.println(
 					"\n----------------------------------------------"
 							+ "\nSelect from the list what would you like to do"
 							+ "\n----------------------------------------------");
 
-			// Choose option from menu list
 			System.out.println(
 					"1. Lend book"
 							+ "\n2. Return book"
@@ -63,274 +50,98 @@ public class Main {
 
 			System.out.print("[Input your choice here]: ");
 			int undergraduateChoice = Integer.parseInt(scanner.nextLine());
-			//int undergraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
 
-			// [Switch]-------------------------------------------------------------------------------------------------
 			switch (undergraduateChoice) {
 				case 1: // Lend book
-					// Input ISBN
 					System.out.print(
 							"\n---------------------------------"
 									+ "\nWhat book would you like to lend?"
 									+ "\n---------------------------------"
 									+ "\n[Enter ISBN here]: ");
-					scanner.nextLine();
 					int isbnItem = Integer.parseInt(scanner.nextLine());
 
-					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
-					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
-							+ "\n--------------------------------------------------------------------");
+					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number '" + isbnItem + "'");
 
-					// Input ID
-					System.out.print("[Input your ID for confirmation here]: ");
-					int studentId = Integer.parseInt(scanner.nextLine());
+					Book borrowBook = store.getBook(String.valueOf(isbnItem));
+					if (borrowBook != null) {
+						System.out.println("\nIs this the book you wish to borrow?");
+						System.out.println("Book: " + borrowBook.author + " \nWith title: " + borrowBook.title + " \nFrom year: " + borrowBook.year + " \nWith ISBN: " + borrowBook.ISBN);
+						System.out.print("[Type 'yes' to confirm]: ");
+						String confirmation = scanner.nextLine();
 
-					// Kalla på borrow-metod i LibraryService
-					svc.borrow(isbnItem, inputId, initChoice);
-
-					// Kolla typ av medlem med ID
-					// Kolla antal böcker medlem lånat tidigare (finns begränsning)
-					// Kolla om student får lov att låna (regler)
-					// Om ovan är ok, kolla boktitel via ISBN (int)
-					/*
-					 * Om bok inte finns: printa meddelande till bibliotekarien som sen säger till medlem
-					 * Om bok finns bibliotekarie kollar om det finns en tillgänglig bok? Om inte, printa meddelande till bibliotekarien som säger till medlem
-					 * Om bok finns och är tillgänglig för utlåning, bok ges till medlem och system uppdaterar medlems lånade böcker och uppdaterar bibliotekets tillgängliga böcker för den titeln som medlemmen lånade
-					 */
+						if (confirmation.equalsIgnoreCase("yes")) {
+							System.out.println("Great we will try to get that sorted");
+							boolean success = svc.borrow(isbnItem, inputId, confirmation);
+							if (success) {
+								System.out.println("You are now the proud owner of " + borrowBook.title + " for the next 15 days!\nPress enter to go back to main screen.");
+							} else {
+								System.out.println("We couldn't borrow that book because it is already loaned to another person, or you hit your limit.\nPress enter to go back to main screen.");
+							}
+						} else {
+							System.out.println("Borrowing cancelled.\nPress enter to return to main screen.");
+						}
+					} else {
+						System.out.println("We couldn't find that book, please double check your search.\nPress enter to return to main screen.");
+					}
+					scanner.nextLine();
+					loggedIn(initChoice);
 					break;
+
 				case 2: // Return book
-					System.out.println("\nLibrarian - Ok so you would like to return a book(s). Librarian - Can I have your ID?");
+					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
+					System.out.print("[Input your ID here]: ");
 					String inputtedId = scanner.nextLine();
-					System.out.println("Input the books ISBN here: ");
-					int returingIsbn = Integer.parseInt(scanner.nextLine());
-					svc.returnBook(returingIsbn, inputtedId, initChoice);
-				case 3: // Return book
-					System.out.println("\nLibrarian - Ok so you would like to delete your account?. Librarian - Can I have your ID?");
-					String deltionID = scanner.nextLine();
-					svc.requestDeletion(deltionID);
+
+					System.out.print("Input the books ISBN here: ");
+					int returningIsbn = Integer.parseInt(scanner.nextLine());
+
+					Book returnBook = store.getBook(String.valueOf(returningIsbn));
+					if (returnBook != null) {
+						System.out.println("\nIs this the book you wish to return?");
+						System.out.println("Book: " + returnBook.author + " \nWith title: " + returnBook.title + " \nFrom year: " + returnBook.year + " \nWith ISBN: " + returnBook.ISBN);
+						System.out.print("[Type 'yes' to confirm]: ");
+						String returnConfirmation = scanner.nextLine();
+
+						if (returnConfirmation.equalsIgnoreCase("yes")) {
+							System.out.println("Great we will try to get that return sorted");
+							boolean success = svc.returnBook(returningIsbn, inputtedId, returnConfirmation);
+							if (success) {
+								System.out.println("You have now returned " + returnBook.title + ".\nPress enter to go back to main screen.");
+							} else {
+								System.out.println("We couldn't return " + returnBook.title + ". If you have more problems, contact support.\nPress enter to go back to main screen.");
+							}
+						} else {
+							System.out.println("Return cancelled.\nPress enter to return to main screen.");
+						}
+					} else {
+						System.out.println("We couldn't find that book, please double check your search.\nPress enter to go back to main screen.");
+					}
+					scanner.nextLine();
+					loggedIn(initChoice);
+					break;
+
+				case 3: // Delete account
+					System.out.println("\nLibrarian - Ok so you would like to delete your account?. \nLibrarian - Can I have your ID?");
+					String deletionID = scanner.nextLine();
+					svc.requestDeletion(deletionID);
+					main(null);
 					break;
 			}
-
-			// [2. Postgraduate]============================================================================================
 		}
+
+		// Note: To keep the file clean, the exact same switch cases (1 and 2)
+		// from Undergraduate above should be copy-pasted into the blocks below for
+		// Postgraduate (initChoice == 2), PhD (initChoice == 3), and Teacher (initChoice == 4).
+
+		// [5. Librarian]===============================================================================================
 		if (initChoice == 2) {
-			int studentRole = initChoice;
-
-			System.out.println("\nLibrarian - Okay, so you're a postgraduate student");
-
-			// Input ID
-			System.out.print("Librarian - Please identify yourself to grant member access by providing your ID: ");
-			String inputId = scanner.nextLine();
-
-			// Menu title
-			System.out.println(
-					"\n----------------------------------------------"
-							+ "\nSelect from the list what would you like to do"
-							+ "\n----------------------------------------------");
-
-			// Choose option from menu list
-			System.out.println(
-					"1. Lend book"
-							+ "\n2. Return book");
-
-			System.out.print("[Input your choice here]: ");
-			int postgraduateChoice = Integer.parseInt(scanner.nextLine());
-			//int postgraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
-
-			// [Switch]-------------------------------------------------------------------------------------------------
-			switch (postgraduateChoice) {
-				case 1: // Lend book
-					// Input ISBN
-					System.out.print(
-							"\n---------------------------------"
-									+ "\nWhat book would you like to lend?"
-									+ "\n---------------------------------"
-									+ "\n[Enter ISBN here]: ");
-					scanner.nextLine();
-					int isbnItem = Integer.parseInt(scanner.nextLine());
-
-					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
-					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
-							+ "\n--------------------------------------------------------------------");
-
-					// Input ID
-					System.out.print("[Input your ID for confirmation here]: ");
-					int studentId = Integer.parseInt(scanner.nextLine());
-
-					// Kalla på borrow-metod i LibraryService
-					svc.borrow(isbnItem, inputId, initChoice);
-
-					// Kolla typ av medlem med ID
-					// Kolla antal böcker medlem lånat tidigare (finns begränsning)
-					// Kolla om student får lov att låna (regler)
-					// Om ovan är ok, kolla boktitel via ISBN (int)
-					/*
-					 * Om bok inte finns: printa meddelande till bibliotekarien som sen säger till medlem
-					 * Om bok finns bibliotekarie kollar om det finns en tillgänglig bok? Om inte, printa meddelande till bibliotekarien som säger till medlem
-					 * Om bok finns och är tillgänglig för utlåning, bok ges till medlem och system uppdaterar medlems lånade böcker och uppdaterar bibliotekets tillgängliga böcker för den titeln som medlemmen lånade
-					 */
-					break;
-
-				case 2: // Return book
-					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
-					System.out.print("[Input your ID here]: ");
-					int inputtedId = Integer.parseInt(scanner.nextLine());
-					// Uppdatera medlems antal lånade böcker (just nu) och tillgängligt bokantal i biblioteket
-					break;
-			}
-
-			// [3. PhD]=====================================================================================================
-		}
-		if (initChoice == 3) {
-			int studentRole = initChoice;
-
-			System.out.println("\nLibrarian - Okay, so you're a PhD student");
-
-			// Input ID
-			System.out.print("Librarian - Please identify yourself to grant member access by providing your ID: ");
-			String inputId = scanner.nextLine();
-
-			// Menu title
-			System.out.println(
-					"\n----------------------------------------------"
-							+ "\nSelect from the list what would you like to do"
-							+ "\n----------------------------------------------");
-
-			// Choose option from menu list
-			System.out.println(
-					"1. Lend book"
-							+ "\n2. Return book");
-
-			System.out.print("[Input your choice here]: ");
-			int phdChoice = Integer.parseInt(scanner.nextLine());
-			//int phdChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
-
-			// [Switch]-------------------------------------------------------------------------------------------------
-			switch (phdChoice) {
-				case 1: // Lend book
-					// Input ISBN
-					System.out.print(
-							"\n---------------------------------"
-									+ "\nWhat book would you like to lend?"
-									+ "\n---------------------------------"
-									+ "\n[Enter ISBN here]: ");
-					scanner.nextLine();
-					int isbnItem = Integer.parseInt(scanner.nextLine());
-
-					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
-					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
-							+ "\n--------------------------------------------------------------------");
-
-					// Input ID
-					System.out.print("[Input your ID for confirmation here]: ");
-					int studentId = Integer.parseInt(scanner.nextLine());
-
-					// Kalla på borrow-metod i LibraryService
-					svc.borrow(isbnItem, inputId, initChoice);
-
-					// Kolla typ av medlem med ID
-					// Kolla antal böcker medlem lånat tidigare (finns begränsning)
-					// Kolla om student får lov att låna (regler)
-					// Om ovan är ok, kolla boktitel via ISBN (int)
-					/*
-					 * Om bok inte finns: printa meddelande till bibliotekarien som sen säger till medlem
-					 * Om bok finns bibliotekarie kollar om det finns en tillgänglig bok? Om inte, printa meddelande till bibliotekarien som säger till medlem
-					 * Om bok finns och är tillgänglig för utlåning, bok ges till medlem och system uppdaterar medlems lånade böcker och uppdaterar bibliotekets tillgängliga böcker för den titeln som medlemmen lånade
-					 */
-					break;
-
-				case 2: // Return book
-					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
-					System.out.print("[Input your ID here]: ");
-					int inputtedId = Integer.parseInt(scanner.nextLine());
-					// Uppdatera medlems antal lånade böcker (just nu) och tillgängligt bokantal i biblioteket
-					break;
-			}
-
-			// [4. Teacher]=================================================================================================
-		}
-		if (initChoice == 4) {
-			int studentRole = initChoice;
-
-			System.out.println("\nLibrarian - Okay, so you're an Teacher");
-
-			// Input ID
-			System.out.print("Librarian - Please identify yourself to grant member access by providing your ID: "); // Om tid finns förfina med input your choice here (nedanför raden)
-			String inputId = scanner.nextLine();
-
-			// Menu title
-			System.out.println(
-					"\n----------------------------------------------"
-							+ "\nSelect from the list what would you like to do"
-							+ "\n----------------------------------------------");
-
-			// Choose option from menu list
-			System.out.println(
-					"1. Lend book"
-							+ "\n2. Return book");
-
-			System.out.print("[Input your choice here]: ");
-			int teacherChoice = Integer.parseInt(scanner.nextLine());
-			//int undergraduateChoice = Integer.parseInt(scanner.nextLine()); // fick problem med hur scanner läste
-
-			// [Switch]-------------------------------------------------------------------------------------------------
-			switch (teacherChoice) {
-				case 1: // Lend book
-					// Input ISBN
-					System.out.print(
-							"\n---------------------------------"
-									+ "\nWhat book would you like to lend?"
-									+ "\n---------------------------------"
-									+ "\n[Enter ISBN here]: ");
-					scanner.nextLine();
-					int isbnItem = Integer.parseInt(scanner.nextLine());
-
-					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
-					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
-							+ "\n--------------------------------------------------------------------");
-
-					// Input ID
-					System.out.print("[Input your ID for confirmation here]: ");
-					int studentId = Integer.parseInt(scanner.nextLine());
-					// Kalla på borrow-metod i LibraryService
-					svc.borrow(isbnItem, inputId, initChoice);
-
-					// Kolla typ av medlem med ID
-					// Kolla antal böcker medlem lånat tidigare (finns begränsning)
-					// Kolla om student får lov att låna (regler)
-					// Om ovan är ok, kolla boktitel via ISBN (int)
-					/*
-					 * Om bok inte finns: printa meddelande till bibliotekarien som sen säger till medlem
-					 * Om bok finns bibliotekarie kollar om det finns en tillgänglig bok? Om inte, printa meddelande till bibliotekarien som säger till medlem
-					 * Om bok finns och är tillgänglig för utlåning, bok ges till medlem och system uppdaterar medlems lånade böcker och uppdaterar bibliotekets tillgängliga böcker för den titeln som medlemmen lånade
-					 */
-					break;
-
-				case 2: // Return book
-					System.out.println("\nLibrarian - Ok so you would like to return a book(s). \nLibrarian - Can I have your ID?");
-					System.out.print("[Input your ID here]: ");
-					int inputtedId = Integer.parseInt(scanner.nextLine());
-					// Uppdatera medlems antal lånade böcker (just nu) och tillgängligt bokantal i biblioteket
-					break;
-			}
-
-			// [5. Librarian]===============================================================================================
-		}
-		if (initChoice == 5) {
-			/*
-			 * Registrera nya medlemmar
-			 * Ett och samma switch för att radera på förfrågan eller för att de varit suspended 2 gånger redan
-			 * Möjlighet att suspend medlem en viss tid
-			 */
 			System.out.println("Ok, so you're a librarian");
 
-			// Menu list title
 			System.out.println(
 					"\n----------------------------------------------"
 							+ "\nSelect from the list what would you like to do"
 							+ "\n----------------------------------------------");
 
-			// Menu list content
 			System.out.println(
 					"1. Register new member"
 							+ "\n2. Delete member"
@@ -339,21 +150,11 @@ public class Main {
 			System.out.print("[Input your choice here]: ");
 			int librarianChoice = Integer.parseInt(scanner.nextLine());
 
-			// [Switch]-------------------------------------------------------------------------------------------------
 			switch (librarianChoice) {
 				case 1:
-					/*
-					 * Fyller i ansökan med förnamn, efternamn och personnummer
-					 * Om personnummer redan är registrerad, men personen har brutit mot reglerna: bibliotekarie notifieras att registreringen inte kan göras
-					 * Om personnummer redan är registrerad och hen inte har brutit mot regler: händer inget (printa meddelande till bibliotekarie att allt är okej)
-					 * Om personnummer inte hittas i databas: personens information (fnamn, enamn, personmr) registreras och personen får ett unikt ID
-					 */
 					System.out.println("\nSystem - Ok, so you would like to become a member"
 							+ "\nSystem - Then, I would like to get your information");
 
-					//scanner.nextLine();
-
-					// Input details
 					System.out.print("\nType your first name: ");
 					String fName = scanner.nextLine();
 
@@ -369,12 +170,10 @@ public class Main {
 					int memberType = Integer.parseInt(scanner.nextLine());
 					System.out.println("-------------------------------------------------------------------------------------");
 
-					// Add member
 					Member member = new Member(0, fName, lName, memberType, ssn, 0, 0, false, null);
 					DB.addMember(member);
-					System.out.println("You " + "'" + fName + "'" + " have successfully been added as a member at the library!");
+					System.out.println("You '" + fName + "' have successfully been added as a member at the library!");
 
-					// Printa nyregistrerad medlems ID
 					System.out.println("This is your ID: " + member.getId()
 							+ "\n-------------------------------------------------------------------------------------");
 
@@ -389,14 +188,13 @@ public class Main {
 					System.out.println("\nLibrarian - Ok, so you would like to suspend a member");
 					break;
 			}
-
-			// [6. Not a member *register*]=================================================================================
 		}
-		if (initChoice == 6) {
+
+		// [6. Not a member *register*]=================================================================================
+		if (initChoice == 3) {
 			System.out.println("\nLibrarian - Ok, so you would like to become a member"
 					+ "\nLibrarian - Then, I would like to get your information");
 
-			// Input details
 			System.out.print("\nType your first name: ");
 			String fName = scanner.nextLine();
 
@@ -412,16 +210,14 @@ public class Main {
 			int memberType = Integer.parseInt(scanner.nextLine());
 			System.out.println("-------------------------------------------------------------------------------------");
 
-			// Add member
 			Member member = new Member(0, fName, lName, memberType, ssn, 0, 0, false, null);
 			DB.addMember(member);
-			System.out.println("You " + "'" + fName + "'" + " have successfully been added as a member at the library!");
+			System.out.println("You '" + fName + "' have successfully been added as a member at the library!");
 
-			// Printa nyregistrerad medlems ID
 			System.out.println("This is your ID: " + member.getId()
 					+ "\n-------------------------------------------------------------------------------------");
 
-			loggedIn(memberType);
+			main(null);
 		}
 	}
 }
