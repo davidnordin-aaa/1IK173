@@ -60,7 +60,7 @@ public class DbLibraryStoreTest {
     void testLoggingForAccountDeletion(){
         Member testMember = new Member(0, "Jane", "Doe", 1, 8888L, 0, 0, false, null);
         store.addMember(testMember);
-        String memberId = String.format("%04d", testMember.getId());
+        String memberId = String.valueOf(testMember.getId());
 
         //trigger multiple suspensions for deletion
         store.suspendMember(memberId);
@@ -78,7 +78,6 @@ public class DbLibraryStoreTest {
         store.addMember(undergrad);
         String memberId = String.format("%04d", undergrad.getId());
 
-        // Act: Fill the quota
         int isbn = 102938; // 1984
         store.lendItem(memberId, isbn);
         store.lendItem(memberId, isbn);
@@ -132,7 +131,7 @@ public class DbLibraryStoreTest {
         store.addMember(testMember);
 
         // Use the generated ID
-        String memberId = String.format("%04d", testMember.getId());
+        String memberId = String.valueOf(testMember.getId());
 
         store.suspendMember(memberId);
         assertTrue(store.isSuspendedMember(memberId));
@@ -152,7 +151,7 @@ public class DbLibraryStoreTest {
 
         Member testMember = new Member(0, "Alice", "Smith", 1, 7777L, 0, 0, false, null);
         store.addMember(testMember);
-        String memberId = String.format("%04d", testMember.getId());
+        String memberId = String.valueOf(testMember.getId());
 
         Long loanId = store.lendItem(memberId, isbn);
 
@@ -171,7 +170,7 @@ public class DbLibraryStoreTest {
 
         Member testMember = new Member(0, "Bob", "Builder", 1, 6666L, 0, 0, false, null);
         store.addMember(testMember);
-        String memberId = String.format("%04d", testMember.getId());
+        String memberId = String.valueOf(testMember.getId());
 
         assertTrue(store.canMemberBorrow(memberId));
 
@@ -189,7 +188,7 @@ public class DbLibraryStoreTest {
 
         Member testMember = new Member(0, "Charlie", "Brown", 2, 4444L, 0, 0, false, null);
         store.addMember(testMember);
-        String memberId = String.format("%04d", testMember.getId());
+        String memberId = String.valueOf(testMember.getId());
 
         long generatedId = store.lendItem(memberId, isbn);
 

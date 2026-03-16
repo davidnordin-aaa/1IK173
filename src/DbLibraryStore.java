@@ -19,7 +19,7 @@ public class DbLibraryStore implements ILibraryStore {
 		try (Connection conn = this.connect(); Statement stmt = conn.createStatement()) {
 			// Ensure tables exists
 			stmt.execute("CREATE TABLE IF NOT EXISTS MEMBERS (" +
-					"ID VARCHAR(4) PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), " +
+					"ID INTEGER PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), " +
 					"MEMBER_TYPE INTEGER, SSN BIGINT UNIQUE, DELAYED_RETURNS_COUNTER INTEGER DEFAULT 0, " +
 					"SUSPENSION_COUNTER INTEGER DEFAULT 0, IS_SUSPENDED BOOLEAN DEFAULT FALSE, " +
 					"SUSPENSION_END_DATE DATE)");
@@ -27,7 +27,6 @@ public class DbLibraryStore implements ILibraryStore {
 			stmt.execute("CREATE TABLE IF NOT EXISTS BOOKS (" +
 					"ISBN INTEGER PRIMARY KEY, TITLE VARCHAR(255), AUTHOR VARCHAR(255), PUBLICATIONYEAR INTEGER)");
 
-			// New table creations based on the provided H2 schema
 			stmt.execute("CREATE TABLE IF NOT EXISTS LIBRARYITEMS (" +
 					"COPY_ID BIGINT AUTO_INCREMENT PRIMARY KEY, " +
 					"ISBN INTEGER REFERENCES BOOKS(ISBN), " +
@@ -35,7 +34,7 @@ public class DbLibraryStore implements ILibraryStore {
 
 			stmt.execute("CREATE TABLE IF NOT EXISTS LOANS (" +
 					"LOAN_ID BIGINT AUTO_INCREMENT PRIMARY KEY, " +
-					"MEMBER_ID VARCHAR(4) REFERENCES MEMBERS(ID), " +
+					"MEMBER_ID INTEGER REFERENCES MEMBERS(ID), " +
 					"COPY_ID BIGINT REFERENCES LIBRARYITEMS(COPY_ID), " +
 					"LOAN_DATE DATE, " +
 					"DUE_DATE DATE)");
@@ -324,22 +323,21 @@ public class DbLibraryStore implements ILibraryStore {
 		return false;
 	}
 
-	private String generateUniqueId(Connection conn) throws SQLException {
+	private int generateUniqueId(Connection conn) throws SQLException {
 		String query = "SELECT ID FROM MEMBERS";
-		java.util.Set<String> existingIds = new java.util.HashSet<>();
+		java.util.Set<Integer> existingIds = new java.util.HashSet<>();
 
 		try (Statement stmt = conn.createStatement();
 			 ResultSet rs = stmt.executeQuery(query)) {
 			while (rs.next()) {
-				existingIds.add(rs.getString("ID"));
+				existingIds.add(rs.getInt("ID"));
 			}
 		}
 
 		// Attempt to find a unique 4-digit number (0001 - 9999)
 		for (int i = 1; i <= 9999; i++) {
-			String candidateId = String.format("%04d", i);
-			if (!existingIds.contains(candidateId)) {
-				return candidateId;
+			if (!existingIds.contains(i)) {
+				return i;
 			}
 		}
 		throw new SQLException("No unique IDs available in the 4-digit range.");
@@ -371,7 +369,7 @@ public class DbLibraryStore implements ILibraryStore {
 
 		try (Connection conn = this.connect()) {
 			//generate unique 4-digit ID
-			String uniqueId = generateUniqueId(conn);
+			int uniqueId = generateUniqueId(conn);
 
 			//default values for new members
 			int initialDelayedReturns = 0;
@@ -379,7 +377,7 @@ public class DbLibraryStore implements ILibraryStore {
 			boolean initialSuspensionStatus = false;
 
 			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-				pstmt.setString(1, uniqueId);
+				pstmt.setInt(1, uniqueId);
 				pstmt.setString(2, newMember.getFirstName());
 				pstmt.setString(3, newMember.getLastName());
 				pstmt.setInt(4, newMember.getMemberType());
@@ -392,7 +390,7 @@ public class DbLibraryStore implements ILibraryStore {
 				pstmt.executeUpdate();
 
 				// Optionally update the object with the generated ID
-				newMember.Id = Integer.parseInt(uniqueId);
+				newMember.setId(uniqueId);
 			}
 		} catch (SQLException e) {
 			logger.error("Error adding member: {}", e.getMessage());
@@ -454,7 +452,7 @@ public class DbLibraryStore implements ILibraryStore {
 		String sql = "DELETE FROM MEMBERS WHERE ID = ?";
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, id);
+			pstmt.setInt(1, Integer.parseInt(id));
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			logger.error("Error removing member: {}", e.getMessage());
