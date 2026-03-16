@@ -24,16 +24,19 @@ public class LibraryService {
 			System.out.println("Great we will try to get that sorted");
 			Loan newLoan = executeLoan(memberId,isbn);
 			if (newLoan == null){
-				System.out.println("We couldnt borrow that book because it is already loaned to another person.");
+				System.out.println("We couldnt borrow that book because it is already loaned to another person. \nPress enter to go back to main screen.");
+				scanner.nextLine();
 				Main.loggedIn(initChoice);
 			}
 			else{
-				System.out.println("You are now the proud owner of "+ book.title+ " until " + newLoan.DueDate +"." + "\nPress enter to go back to main screen");
+				System.out.println("You are now the proud owner of "+ book.title+ " until " + newLoan.DueDate +"." + "\nPress enter to go back to main screen.");
+				scanner.nextLine();
 				Main.loggedIn(initChoice);
 			}
 		}
 		else{
-			System.out.println("We couldnt find that book, please double check your search.");
+			System.out.println("We couldnt find that book, please double check your search.\nPress enter to return to main screen.");
+			scanner.nextLine();
 			Main.loggedIn(initChoice);
 		}
 
@@ -57,16 +60,19 @@ public class LibraryService {
 			System.out.println("Great we will try to get that return sorted");
 			boolean newReturn = executeReturn(memberId,isbn);
 			if (!newReturn){
-				System.out.println("We couldnt return "+ book.title +". If you have more problems, contact support");
+				System.out.println("We couldnt return "+ book.title +". If you have more problems, contact support.\n Press enter to go back to main screen.");
+				scanner.nextLine();
+				Main.loggedIn(initchoice);
 			}
 			else{
-				System.out.println("You have now returned "+ book.title+ "." + "\nPress enter to go back to main screen");
+				System.out.println("You have now returned "+ book.title+ "." + "\nPress enter to go back to main screen.");
 				scanner.nextLine();
 				Main.loggedIn(initchoice);
 			}
 		}
 		else{
-			System.out.println("We couldnt find that book, please double check your search.");
+			System.out.println("We couldnt find that book, please double check your search.\nPress enter to go back to main screen.");
+			scanner.nextLine();
 			Main.loggedIn(initchoice);
 		}
 		return status;

@@ -76,10 +76,10 @@ public class Main {
 									+ "\nWhat book would you like to lend?"
 									+ "\n---------------------------------"
 									+ "\n[Enter ISBN here]: ");
-					scanner.nextLine();
 					int isbnItem = Integer.parseInt(scanner.nextLine());
 
 					System.out.println("\nLibrarian: Okay, so you want to lend a book with ISBN number " + "'" + isbnItem + "'");
+
 					System.out.println("Librarian: Please provide me with your ID, in order to lend the item"
 							+ "\n--------------------------------------------------------------------");
 
@@ -363,8 +363,7 @@ public class Main {
 					Member member = new Member(0, fName, lName, 1, ssn, 0, 0, false, null);
 					DB.addMember(member);
 
-					System.out.println("\nLibrarian - You " + "'" + fName + "'" + " have successfully been added as a member at the library!"
-							+ "\nLibrarian - You can now start using the system!");
+					System.out.println("\nLibrarian - You " + "'" + fName + "'" + " have successfully been added as a member at the library!" + "\nLibrarian - You can now start using the system!");
 					// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
 					// Kolla om personnummer redan finns i databas innan lägga till
 					break;
