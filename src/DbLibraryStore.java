@@ -115,7 +115,7 @@ public class DbLibraryStore implements ILibraryStore {
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setBoolean(1, status);
 			pstmt.setDate(2, endDate != null ? Date.valueOf(endDate) : null);
-			pstmt.setString(3, id);
+			pstmt.setInt(3, Integer.parseInt(id));
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println("Error updating suspension status: " + e.getMessage());
@@ -248,7 +248,7 @@ public class DbLibraryStore implements ILibraryStore {
 			conn.setAutoCommit(false); // Start transaction
 
 			try (PreparedStatement findStmt = conn.prepareStatement(findLoanSql)) {
-				findStmt.setString(1, memberId);
+				findStmt.setInt(1, Integer.parseInt(memberId));
 				findStmt.setInt(2, isbn);
 				ResultSet rs = findStmt.executeQuery();
 
@@ -261,7 +261,7 @@ public class DbLibraryStore implements ILibraryStore {
 					if (java.sql.Date.valueOf(LocalDate.now()).after(dueDate)) {
 						logger.warn("Delayed return detected for member {}, increasing delay counter.", memberId);
 						try (PreparedStatement delayStmt = conn.prepareStatement(updateDelaySql)) {
-							delayStmt.setString(1, memberId);
+							findStmt.setInt(1, Integer.parseInt(memberId));
 							delayStmt.executeUpdate();
 						}
 					}
@@ -468,12 +468,13 @@ public class DbLibraryStore implements ILibraryStore {
 			Date endDate = Date.valueOf(LocalDate.now().plusDays(15));
 			try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
 				pstmt.setDate(1, endDate);
-				pstmt.setString(2, id);
+				pstmt.setInt(2, Integer.parseInt(id));
 				pstmt.executeUpdate();
 			}
 
 			Member updatedMember = getMember(id);
 			if (updatedMember != null && updatedMember.getSuspensionCounter() > 2) {
+				logger.fatal("Member {} deleted due to repeated violation", getMember(id));
 				removeMember(id);
 			}
 		} catch (SQLException e) {
