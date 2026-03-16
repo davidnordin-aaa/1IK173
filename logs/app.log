@@ -105,3 +105,23 @@ INSERT INTO MEMBERS (ID, FIRST_NAME, LAST_NAME, MEMBER_TYPE, SSN, DELAYED_RETURN
 2026-03-16 21:27:10,177 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
 2026-03-16 21:27:24,719 DEBUG DbLibraryStore [main] Processing return for ISBN 102938 from member 1000
 2026-03-16 21:27:24,756 INFO DbLibraryStore [main] Item 102938 successfully returned by member 1000
+2026-03-16 21:57:02,663 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1000
+2026-03-16 21:57:02,676 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
+2026-03-16 21:57:21,122 DEBUG DbLibraryStore [main] Attempting to lend ISBN 114267 to member ID 1000
+2026-03-16 21:57:21,129 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 114267) to member 1000
+2026-03-16 21:57:43,199 DEBUG DbLibraryStore [main] Attempting to lend ISBN 146123 to member ID 1000
+2026-03-16 21:57:43,206 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 146123) to member 1000
+2026-03-16 21:58:27,383 DEBUG DbLibraryStore [main] Processing return for ISBN 102938 from member 1000
+2026-03-16 21:58:27,392 INFO DbLibraryStore [main] Item 102938 successfully returned by member 1000
+2026-03-16 21:59:16,821 ERROR DbLibraryStore [main] Error removing member: Referential integrity constraint violation: "FK_MEMBER_ID: PUBLIC.LOANS FOREIGN KEY(MEMBER_ID) REFERENCES PUBLIC.MEMBERS(ID) (1000)"; SQL statement:
+DELETE FROM MEMBERS WHERE ID = ? [23503-240]
+2026-03-16 22:00:41,733 ERROR DbLibraryStore [main] Error removing member: Referential integrity constraint violation: "FK_MEMBER_ID: PUBLIC.LOANS FOREIGN KEY(MEMBER_ID) REFERENCES PUBLIC.MEMBERS(ID) (1000)"; SQL statement:
+DELETE FROM MEMBERS WHERE ID = ? [23503-240]
+2026-03-16 22:01:48,932 ERROR DbLibraryStore [main] Error removing member: Referential integrity constraint violation: "FK_MEMBER_ID: PUBLIC.LOANS FOREIGN KEY(MEMBER_ID) REFERENCES PUBLIC.MEMBERS(ID) (1000)"; SQL statement:
+DELETE FROM MEMBERS WHERE ID = ? [23503-240]
+2026-03-16 22:04:59,907 ERROR DbLibraryStore [main] Error removing member: Referential integrity constraint violation: "FK_MEMBER_ID: PUBLIC.LOANS FOREIGN KEY(MEMBER_ID) REFERENCES PUBLIC.MEMBERS(ID) (1000)"; SQL statement:
+DELETE FROM MEMBERS WHERE ID = ? [23503-240]
+2026-03-16 22:06:56,818 DEBUG DbLibraryStore [main] Processing return for ISBN 146123 from member 1000
+2026-03-16 22:06:56,829 INFO DbLibraryStore [main] Item 146123 successfully returned by member 1000
+2026-03-16 22:07:17,715 DEBUG DbLibraryStore [main] Processing return for ISBN 114267 from member 1000
+2026-03-16 22:07:17,723 INFO DbLibraryStore [main] Item 114267 successfully returned by member 1000
