@@ -393,7 +393,7 @@ public class Main {
 
 			System.out.print("\nSelect from the list what member are you registering as: "
 			+ "\n--------------------------------------------------------"
-			+ "\n1. Postgraduate student" + "\n2. PhD student" + "\n3. Teacher");
+			+ "\n1. Undergraduate student" + "\n2. Postgraduate student" + "\n3. PhD student" + "\n4. Teacher");
 			System.out.print("\n[Input choice here]: ");
 			int memberType = Integer.parseInt(scanner.nextLine());
 
@@ -401,8 +401,8 @@ public class Main {
 			Member member = new Member(0, fName, lName, memberType, ssn, 0, 0, false, null);
 			DB.addMember(member);
 			System.out.println("You " + "'" + fName + "'" + " have successfully been added as a member at the library!");
-			// Kolla om person brutit mot reglerna så registrering ej kan göras (printa meddelande)
-			// Kolla om personnummer redan finns i databas innan lägga till
+			
+
 
 
 
