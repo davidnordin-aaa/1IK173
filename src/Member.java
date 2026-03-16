@@ -37,6 +37,10 @@ public class Member {
 		return Id;
 	}
 
+	public void setId(int id) {
+		Id = id;
+	}
+
 	public int getMemberType() {
 		return MemberType;
 	}

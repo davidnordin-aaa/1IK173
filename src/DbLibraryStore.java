@@ -1,13 +1,11 @@
 import java.sql.*;
 import java.time.LocalDate;
-/*
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
- */
 
 public class DbLibraryStore implements ILibraryStore {
 
-	//private static final Logger logger = LogManager.getLogger(DbLibraryStore.class)
+	private static final Logger logger = LogManager.getLogger(DbLibraryStore.class);
 	private static final String DB_URL = "jdbc:h2:./test;AUTO_SERVER=TRUE";
 	private static final String USER = "sa";
 	private static final String PASS = "";
@@ -17,10 +15,11 @@ public class DbLibraryStore implements ILibraryStore {
 	}
 
 	public void initializeData() { //use this method when starting program
+		logger.info("Initializing database, seeding data");
 		try (Connection conn = this.connect(); Statement stmt = conn.createStatement()) {
 			// Ensure tables exists
 			stmt.execute("CREATE TABLE IF NOT EXISTS MEMBERS (" +
-					"ID VARCHAR(4) PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), " +
+					"ID INTEGER PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), " +
 					"MEMBER_TYPE INTEGER, SSN BIGINT UNIQUE, DELAYED_RETURNS_COUNTER INTEGER DEFAULT 0, " +
 					"SUSPENSION_COUNTER INTEGER DEFAULT 0, IS_SUSPENDED BOOLEAN DEFAULT FALSE, " +
 					"SUSPENSION_END_DATE DATE)");
@@ -28,7 +27,6 @@ public class DbLibraryStore implements ILibraryStore {
 			stmt.execute("CREATE TABLE IF NOT EXISTS BOOKS (" +
 					"ISBN INTEGER PRIMARY KEY, TITLE VARCHAR(255), AUTHOR VARCHAR(255), PUBLICATIONYEAR INTEGER)");
 
-			// New table creations based on the provided H2 schema
 			stmt.execute("CREATE TABLE IF NOT EXISTS LIBRARYITEMS (" +
 					"COPY_ID BIGINT AUTO_INCREMENT PRIMARY KEY, " +
 					"ISBN INTEGER REFERENCES BOOKS(ISBN), " +
@@ -36,7 +34,7 @@ public class DbLibraryStore implements ILibraryStore {
 
 			stmt.execute("CREATE TABLE IF NOT EXISTS LOANS (" +
 					"LOAN_ID BIGINT AUTO_INCREMENT PRIMARY KEY, " +
-					"MEMBER_ID VARCHAR(4) REFERENCES MEMBERS(ID), " +
+					"MEMBER_ID INTEGER REFERENCES MEMBERS(ID), " +
 					"COPY_ID BIGINT REFERENCES LIBRARYITEMS(COPY_ID), " +
 					"LOAN_DATE DATE, " +
 					"DUE_DATE DATE)");
@@ -44,7 +42,7 @@ public class DbLibraryStore implements ILibraryStore {
 			// Check if books need to be seeded
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM BOOKS");
 			if (rs.next() && rs.getInt(1) == 0) {
-				//logger.info("Seeding initial book data...");
+				logger.info("Seeding initial book data...");
 				stmt.execute("INSERT INTO books VALUES (238103, 'The Witcher - The Last Wish', 'Andrzej Sapkowski', 1993)");
 				stmt.execute("INSERT INTO books VALUES (102938, '1984', 'George Orwell', 1949)");
 				stmt.execute("INSERT INTO books VALUES (146123, 'The Hobbit', 'J.R.R. Tolkien', 1937)");
@@ -78,10 +76,11 @@ public class DbLibraryStore implements ILibraryStore {
 				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (572359, TRUE)");
 				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (832575, TRUE)");
 				stmt.execute("INSERT INTO LIBRARYITEMS (ISBN, IS_AVAILABLE) VALUES (832575, TRUE)");
+				logger.info("Database seeding successful");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(); // This will print the exact SQL error to your test console
-			//logger.error("Database initialization failed: {}", e.getMessage());
+			logger.error("Database initialization failed: {}", e.getMessage());
 		}
 	}
 
@@ -104,29 +103,10 @@ public class DbLibraryStore implements ILibraryStore {
 				return -1;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			// Handle database error
+			e.printStackTrace();
+			logger.error("Transaction failed, rolling back: " + e.getMessage());
 		}
 		return -1;
-	}
-
-	public void clearDatabase() {
-		try (Connection conn = this.connect(); Statement stmt = conn.createStatement()) {
-			// Disable checks to allow complete deletion
-			stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
-
-			// Truncate and reset auto-increment IDs
-			stmt.execute("TRUNCATE TABLE LOANS RESTART IDENTITY");
-			stmt.execute("TRUNCATE TABLE LIBRARYITEMS RESTART IDENTITY");
-			stmt.execute("TRUNCATE TABLE MEMBERS");
-			stmt.execute("TRUNCATE TABLE BOOKS");
-
-			// Re-enable checks
-			stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void updateSuspensionStatus(String id, boolean status, LocalDate endDate) {
@@ -135,7 +115,7 @@ public class DbLibraryStore implements ILibraryStore {
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setBoolean(1, status);
 			pstmt.setDate(2, endDate != null ? Date.valueOf(endDate) : null);
-			pstmt.setString(3, id);
+			pstmt.setInt(3, Integer.parseInt(id));
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println("Error updating suspension status: " + e.getMessage());
@@ -148,16 +128,6 @@ public class DbLibraryStore implements ILibraryStore {
 				rs.getInt("ISBN"),
 				rs.getString("AUTHOR"),
 				rs.getInt("PUBLICATIONYEAR")
-		);
-	}
-
-	private Loan mapLoan(ResultSet rs) throws SQLException {
-		return new Loan(
-				rs.getLong("LOAN_ID"),
-				rs.getInt("MEMBER_ID"),
-				rs.getInt("COPY_ID"),
-				rs.getDate("LOAN_DATE"),
-				rs.getDate("DUE_DATE")
 		);
 	}
 
@@ -182,8 +152,8 @@ public class DbLibraryStore implements ILibraryStore {
 			pstmt.setInt(1, isbn);
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Error adding library item: " + e.getMessage());
+			e.printStackTrace();
+			logger.error("Error adding ISBN {}: {}", isbn, e.getMessage());
 		}
 	}
 
@@ -203,14 +173,14 @@ public class DbLibraryStore implements ILibraryStore {
 				);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
+			e.printStackTrace();
 			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			// Handle database error
 		}
 		return null;
 	}
 
 	public Long lendItem(String memberId, int isbn) {
+		logger.debug("Attempting to lend ISBN {} to member ID {}", isbn, memberId);
 		String findItemSql = "SELECT COPY_ID FROM LIBRARYITEMS WHERE ISBN = ? AND IS_AVAILABLE = TRUE LIMIT 1";
 		String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";
 		String insertLoanSql = "INSERT INTO LOANS (MEMBER_ID, COPY_ID, LOAN_DATE, DUE_DATE) VALUES (?, ?, ?, ?)";
@@ -241,28 +211,32 @@ public class DbLibraryStore implements ILibraryStore {
 						try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
 							if (generatedKeys.next()) {
 								long loanId = generatedKeys.getLong(1);
+								logger.info("Succesfully lent item (ISBN: {}) to member {}", isbn, memberId);
 								conn.commit();
 								return loanId;
+							}else{
+								logger.warn("Lending failed, ISBN {} not available", isbn);
 							}
 						}
 					}
 				}
 			} catch (SQLException e) {
+				logger.warn("Transaction failed, rolling back: {}", e.getMessage());
 				conn.rollback();
-				e.printStackTrace(); // This will print the exact SQL error to your test console
-				System.out.println("Transaction failed, rolling back: " + e.getMessage());
+				e.printStackTrace();
 			} finally {
 				conn.setAutoCommit(true);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
+			logger.error("Transaction failed, rolling back: {}", e.getMessage());
 		}
 		return -1L; // Item not available or error occurred
 	}
 
 
 	public boolean returnItem(String memberId, int isbn) {
+		logger.debug("Processing return for ISBN {} from member {}", isbn, memberId);
 		String findLoanSql = "SELECT l.LOAN_ID, l.COPY_ID, l.DUE_DATE FROM LOANS l " +
 				"JOIN LIBRARYITEMS i ON l.COPY_ID = i.COPY_ID " +
 				"WHERE l.MEMBER_ID = ? AND i.ISBN = ? LIMIT 1";
@@ -274,7 +248,7 @@ public class DbLibraryStore implements ILibraryStore {
 			conn.setAutoCommit(false); // Start transaction
 
 			try (PreparedStatement findStmt = conn.prepareStatement(findLoanSql)) {
-				findStmt.setString(1, memberId);
+				findStmt.setInt(1, Integer.parseInt(memberId));
 				findStmt.setInt(2, isbn);
 				ResultSet rs = findStmt.executeQuery();
 
@@ -285,8 +259,9 @@ public class DbLibraryStore implements ILibraryStore {
 
 					// Check for delayed return
 					if (java.sql.Date.valueOf(LocalDate.now()).after(dueDate)) {
+						logger.warn("Delayed return detected for member {}, increasing delay counter.", memberId);
 						try (PreparedStatement delayStmt = conn.prepareStatement(updateDelaySql)) {
-							delayStmt.setString(1, memberId);
+							findStmt.setInt(1, Integer.parseInt(memberId));
 							delayStmt.executeUpdate();
 						}
 					}
@@ -302,7 +277,7 @@ public class DbLibraryStore implements ILibraryStore {
 						deleteStmt.setLong(1, loanId);
 						deleteStmt.executeUpdate();
 					}
-
+					logger.info("Item {} successfully returned by member {}", isbn, memberId);
 					conn.commit(); // Commit transaction
 					return true;
 				}
@@ -314,8 +289,8 @@ public class DbLibraryStore implements ILibraryStore {
 				conn.setAutoCommit(true);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Database error during return: " + e.getMessage());
+			e.printStackTrace();
+			logger.error("Error returning ISBN {}: {}", isbn, e.getMessage());
 		}
 		return false; // Loan record not found or error occurred
 	}
@@ -332,7 +307,7 @@ public class DbLibraryStore implements ILibraryStore {
 				int type = rs.getInt("MEMBER_TYPE");
 				int currentLoans = rs.getInt("active_loans");
 
-				// Enforce limits: Undergrad (3), Master (5), PhD (7), Teacher (10) [cite: 27]
+				// Enforce borrowing limits
 				return switch (type) {
 					case 1 -> currentLoans < 3;  // Undergraduate
 					case 2 -> currentLoans < 5;  // Postgraduate
@@ -342,29 +317,27 @@ public class DbLibraryStore implements ILibraryStore {
 				};
 			}
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			//logger.error("Error checking borrowing limits: {}", e.getMessage());
+			e.printStackTrace();
+			logger.error("Error checking borrowing limits: {}", e.getMessage());
 		}
 		return false;
 	}
 
-	private String generateUniqueId(Connection conn) throws SQLException {
+	private int generateUniqueId(Connection conn) throws SQLException {
 		String query = "SELECT ID FROM MEMBERS";
-		java.util.Set<String> existingIds = new java.util.HashSet<>();
+		java.util.Set<Integer> existingIds = new java.util.HashSet<>();
 
 		try (Statement stmt = conn.createStatement();
 			 ResultSet rs = stmt.executeQuery(query)) {
 			while (rs.next()) {
-				existingIds.add(rs.getString("ID"));
+				existingIds.add(rs.getInt("ID"));
 			}
 		}
 
 		// Attempt to find a unique 4-digit number (0001 - 9999)
 		for (int i = 1; i <= 9999; i++) {
-			String candidateId = String.format("%04d", i);
-			if (!existingIds.contains(candidateId)) {
-				return candidateId;
+			if (!existingIds.contains(i)) {
+				return i;
 			}
 		}
 		throw new SQLException("No unique IDs available in the 4-digit range.");
@@ -381,11 +354,10 @@ public class DbLibraryStore implements ILibraryStore {
 			pstmt.setString(3, newBook.getAuthor());
 			pstmt.setInt(4, newBook.getYear());
 			pstmt.executeUpdate();
-			//logger.info("Title '{}' added to database.", newBook.title);
+			logger.info("Title '{}' added to database.", newBook.title);
 		} catch (SQLException e) {
-			e.printStackTrace(); // This will print the exact SQL error to your test console
-			System.out.println("Transaction failed, rolling back: " + e.getMessage());
-			//logger.error("Failed to add book {}: {}", newBook.ISBN, e.getMessage());
+			e.printStackTrace();
+			logger.error("Failed to add book {}: {}", newBook.ISBN, e.getMessage());
 		}
 	}
 
@@ -397,16 +369,15 @@ public class DbLibraryStore implements ILibraryStore {
 
 		try (Connection conn = this.connect()) {
 			//generate unique 4-digit ID
-			String uniqueId = generateUniqueId(conn);
+			int uniqueId = generateUniqueId(conn);
 
 			//default values for new members
 			int initialDelayedReturns = 0;
 			int initialSuspensionCounter = 0;
 			boolean initialSuspensionStatus = false;
-			Date initialSuspensionEndDate = null;
 
 			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-				pstmt.setString(1, uniqueId);
+				pstmt.setInt(1, uniqueId);
 				pstmt.setString(2, newMember.getFirstName());
 				pstmt.setString(3, newMember.getLastName());
 				pstmt.setInt(4, newMember.getMemberType());
@@ -419,10 +390,10 @@ public class DbLibraryStore implements ILibraryStore {
 				pstmt.executeUpdate();
 
 				// Optionally update the object with the generated ID
-				newMember.Id = Integer.parseInt(uniqueId);
+				newMember.setId(uniqueId);
 			}
 		} catch (SQLException e) {
-			System.err.println("Database error during member registration: " + e.getMessage());
+			logger.error("Error adding member: {}", e.getMessage());
 		}
 	}
 
@@ -438,7 +409,7 @@ public class DbLibraryStore implements ILibraryStore {
 				}
 			}
 		} catch (SQLException | NumberFormatException e) {
-			System.err.println("Error retrieving book: " + e.getMessage());
+			logger.error("Error getting book: {}", e.getMessage());
 		}
 		return null;
 	}
@@ -455,7 +426,7 @@ public class DbLibraryStore implements ILibraryStore {
 				}
 			}
 		} catch (SQLException | NumberFormatException e) {
-			System.err.println("Error retrieving member: " + e.getMessage());
+			logger.error("Error getting member: {}", e.getMessage());
 		}
 		return null;
 	}
@@ -481,10 +452,10 @@ public class DbLibraryStore implements ILibraryStore {
 		String sql = "DELETE FROM MEMBERS WHERE ID = ?";
 		try (Connection conn = this.connect();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, id);
+			pstmt.setInt(1, Integer.parseInt(id));
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
-			System.err.println("Error removing member: " + e.getMessage());
+			logger.error("Error removing member: {}", e.getMessage());
 		}
 	}
 
@@ -497,16 +468,17 @@ public class DbLibraryStore implements ILibraryStore {
 			Date endDate = Date.valueOf(LocalDate.now().plusDays(15));
 			try (PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
 				pstmt.setDate(1, endDate);
-				pstmt.setString(2, id);
+				pstmt.setInt(2, Integer.parseInt(id));
 				pstmt.executeUpdate();
 			}
 
 			Member updatedMember = getMember(id);
 			if (updatedMember != null && updatedMember.getSuspensionCounter() > 2) {
+				logger.fatal("Member {} deleted due to repeated violation", getMember(id));
 				removeMember(id);
 			}
 		} catch (SQLException e) {
-			System.err.println("Error during member suspension: " + e.getMessage());
+			logger.error("Error during member suspension: {}", e.getMessage());
 		}
 	}
 }
