@@ -72,41 +72,34 @@ public class LibraryService {
 
 	}
 
-	private Loan executeLoan(String memberId, int isbn) {
-		DbLibraryStore DB = new DbLibraryStore();
+	public Loan executeLoan(String memberId, int isbn) {
 		Loan newLoan = null;
-		if(DB.isAlreadyBorrowed(memberId, isbn) == -1){
-			long loanID = DB.lendItem(memberId,isbn);
+		if(store.isAlreadyBorrowed(memberId, isbn) == -1){
+			long loanID = store.lendItem(memberId, isbn);
 			if(loanID > 0) {
-				newLoan = DB.getLoan(loanID);
+				newLoan = store.getLoan(loanID);
 			}
 		}
 		return newLoan;
 	}
-	private boolean executeReturn(String memberId, int isbn) {
-		DbLibraryStore DB = new DbLibraryStore();
-		boolean newReturn = false;
-		int loanID = DB.isAlreadyBorrowed(memberId, isbn);
+
+	public boolean executeReturn(String memberId, int isbn) {
+		int loanID = store.isAlreadyBorrowed(memberId, isbn);
 		if(loanID > 0){
-			newReturn = DB.returnItem(memberId,isbn);
-			newReturn = true;
+			return store.returnItem(memberId, isbn);
 		}
-		return newReturn;
+		return false;
 	}
+
 	public boolean requestDeletion(String memberID){
-		DbLibraryStore DB = new DbLibraryStore();
-		 try {
-			 DB.removeMember(memberID);
-			 if(DB.getMember(memberID) == null){
-				System.out.println("Your account has been removed.");
-			 }
-			 else{
-				 throw new Exception();
-			 }
-		 }
-		 catch (Exception e){
-			 System.out.println("We could not remove your account. Double check if you have unreturned books!");
-		 }
+		try {
+			store.removeMember(memberID);
+			if(store.getMember(memberID) == null){
+				return true;
+			}
+		} catch (Exception e){
+			return false;
+		}
 		return false;
 	}
 

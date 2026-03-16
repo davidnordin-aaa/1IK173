@@ -1,11 +1,9 @@
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import java.sql.*;
-import java.util.Date;
 import java.io.File;
 
 public class DbLibraryStoreTest {
@@ -18,16 +16,6 @@ public class DbLibraryStoreTest {
     private Connection connect() throws SQLException {
         return DriverManager.getConnection(DB_URL, USER, PASS);
     }
-/*
-    public FileLibraryStore fls;
-    public PurchaseManager cut;
-
-    @BeforeEach
-    public void setUp() {
-        fls = mock(FileLibraryStore.class);
-        cut = new PurchaseManager(ps);
-    }
- */
 
     @BeforeEach
     void setUp() {

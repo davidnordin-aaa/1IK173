@@ -6,4 +6,9 @@ public interface ILibraryStore {
 	public boolean isSuspendedMember(String id);
 	public void removeMember(String id);
 	public void suspendMember(String id);
+
+	Long lendItem(String memberId, int isbn);
+	boolean returnItem(String memberId, int isbn);
+	int isAlreadyBorrowed(String memberId, int isbn);
+	Loan getLoan(long loanId);
 }

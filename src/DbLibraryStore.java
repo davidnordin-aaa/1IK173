@@ -84,7 +84,6 @@ public class DbLibraryStore implements ILibraryStore {
 		}
 	}
 
-
 	public int isAlreadyBorrowed(String memberId, int isbn) {
 		//String updateItemSql = "UPDATE LIBRARYITEMS SET IS_AVAILABLE = FALSE WHERE COPY_ID = ?";
 		String sql = "SELECT LOAN_ID from TEST.PUBLIC.LOANS\n" +
@@ -234,7 +233,6 @@ public class DbLibraryStore implements ILibraryStore {
 		return -1L; // Item not available or error occurred
 	}
 
-
 	public boolean returnItem(String memberId, int isbn) {
 		logger.debug("Processing return for ISBN {} from member {}", isbn, memberId);
 		String findLoanSql = "SELECT l.LOAN_ID, l.COPY_ID, l.DUE_DATE FROM LOANS l " +
@@ -334,8 +332,8 @@ public class DbLibraryStore implements ILibraryStore {
 			}
 		}
 
-		// Attempt to find a unique 4-digit number (0001 - 9999)
-		for (int i = 1; i <= 9999; i++) {
+		// Attempt to find a unique 4-digit number (1000 - 9999)
+		for (int i = 1000; i <= 9999; i++) {
 			if (!existingIds.contains(i)) {
 				return i;
 			}
@@ -474,7 +472,7 @@ public class DbLibraryStore implements ILibraryStore {
 
 			Member updatedMember = getMember(id);
 			if (updatedMember != null && updatedMember.getSuspensionCounter() > 2) {
-				logger.fatal("Member {} deleted due to repeated violation", getMember(id));
+				logger.fatal("Member {} deleted due to repeated violations", id);
 				removeMember(id);
 			}
 		} catch (SQLException e) {

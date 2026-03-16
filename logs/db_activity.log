@@ -285,3 +285,158 @@ INSERT INTO LOANS (MEMBER_ID, COPY_ID, LOAN_DATE, DUE_DATE) VALUES (?, ?, ?, ?) 
 2026-03-16 16:22:19,878 INFO DbLibraryStore [main] Initializing database, seeding data
 2026-03-16 16:22:19,936 INFO DbLibraryStore [main] Seeding initial book data...
 2026-03-16 16:22:19,937 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 16:45:51,316 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 16:45:51,378 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 16:45:51,394 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 16:45:51,865 FATAL DbLibraryStore [main] Member Member@4912d525 deleted due to repeated violation
+2026-03-16 16:45:52,048 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 16:45:52,115 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 16:45:52,123 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 16:45:52,236 INFO DbLibraryStore [main] Title 'Test Driven Development' added to database.
+2026-03-16 16:45:52,424 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 16:45:52,489 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 16:45:52,494 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 16:45:52,750 DEBUG DbLibraryStore [main] Attempting to lend ISBN 174213 to member ID 1
+2026-03-16 16:45:52,814 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 174213) to member 1
+2026-03-16 16:45:52,985 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 16:45:53,022 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 16:45:53,036 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 16:45:53,179 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 16:45:53,235 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 16:45:53,239 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 16:45:53,347 INFO DbLibraryStore [main] Title 'Test Book' added to database.
+2026-03-16 16:45:53,523 DEBUG DbLibraryStore [main] Attempting to lend ISBN 999999 to member ID 1
+2026-03-16 16:45:53,567 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 999999) to member 1
+2026-03-16 16:45:53,586 DEBUG DbLibraryStore [main] Processing return for ISBN 999999 from member 1
+2026-03-16 16:45:53,651 INFO DbLibraryStore [main] Item 999999 successfully returned by member 1
+2026-03-16 16:45:53,782 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 16:45:53,849 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 16:45:53,850 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 16:45:54,186 FATAL DbLibraryStore [main] Member Member@421a4ee1 deleted due to repeated violation
+2026-03-16 16:45:54,350 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 16:45:54,391 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 16:45:54,393 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 16:45:54,871 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 1
+2026-03-16 16:45:54,933 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 1
+2026-03-16 16:45:54,952 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 1
+2026-03-16 16:45:54,998 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 1
+2026-03-16 16:45:55,014 DEBUG DbLibraryStore [main] Attempting to lend ISBN 146123 to member ID 1
+2026-03-16 16:45:55,081 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 146123) to member 1
+2026-03-16 16:45:55,223 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 16:45:55,269 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 16:45:55,273 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 16:45:55,401 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 0001
+2026-03-16 16:45:55,472 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 0001
+2026-03-16 16:45:55,493 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 0001
+2026-03-16 16:45:55,545 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 0001
+2026-03-16 16:45:55,577 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 0001
+2026-03-16 16:45:55,617 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 0001
+2026-03-16 16:45:55,786 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 16:45:55,841 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 16:45:55,842 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:09:03,769 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:09:03,830 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:09:03,842 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:09:04,263 FATAL DbLibraryStore [main] Member 1 deleted due to repeated violation
+2026-03-16 17:09:04,449 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:09:04,514 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:09:04,522 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:09:04,647 INFO DbLibraryStore [main] Title 'Test Driven Development' added to database.
+2026-03-16 17:09:04,821 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:09:04,887 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:09:04,894 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:09:05,128 DEBUG DbLibraryStore [main] Attempting to lend ISBN 174213 to member ID 1
+2026-03-16 17:09:05,196 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 174213) to member 1
+2026-03-16 17:09:05,331 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:09:05,395 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:09:05,400 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:09:05,549 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:09:05,602 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:09:05,606 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:09:05,701 INFO DbLibraryStore [main] Title 'Test Book' added to database.
+2026-03-16 17:09:05,866 DEBUG DbLibraryStore [main] Attempting to lend ISBN 999999 to member ID 1
+2026-03-16 17:09:05,912 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 999999) to member 1
+2026-03-16 17:09:05,935 DEBUG DbLibraryStore [main] Processing return for ISBN 999999 from member 1
+2026-03-16 17:09:06,010 INFO DbLibraryStore [main] Item 999999 successfully returned by member 1
+2026-03-16 17:09:06,152 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:09:06,209 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:09:06,211 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:09:06,561 FATAL DbLibraryStore [main] Member 1 deleted due to repeated violation
+2026-03-16 17:09:06,716 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:09:06,781 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:09:06,783 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:09:07,285 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 1
+2026-03-16 17:09:07,325 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 1
+2026-03-16 17:09:07,344 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 1
+2026-03-16 17:09:07,389 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 1
+2026-03-16 17:09:07,410 DEBUG DbLibraryStore [main] Attempting to lend ISBN 146123 to member ID 1
+2026-03-16 17:09:07,453 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 146123) to member 1
+2026-03-16 17:09:07,603 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:09:07,641 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:09:07,642 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:09:07,768 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 0001
+2026-03-16 17:09:07,840 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 0001
+2026-03-16 17:09:07,861 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 0001
+2026-03-16 17:09:07,930 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 0001
+2026-03-16 17:09:07,943 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 0001
+2026-03-16 17:09:08,008 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 0001
+2026-03-16 17:09:08,161 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:09:08,213 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:09:08,217 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:16:04,276 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1
+2026-03-16 17:16:04,299 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1
+2026-03-16 17:16:47,539 DEBUG DbLibraryStore [main] Processing return for ISBN 102938 from member 1
+2026-03-16 17:16:47,553 INFO DbLibraryStore [main] Item 102938 successfully returned by member 1
+2026-03-16 17:47:54,352 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:47:54,484 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:47:54,511 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:47:55,202 FATAL DbLibraryStore [main] Member 1000 deleted due to repeated violation
+2026-03-16 17:47:55,497 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:47:55,562 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:47:55,582 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:47:55,734 INFO DbLibraryStore [main] Title 'Test Driven Development' added to database.
+2026-03-16 17:47:56,017 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:47:56,086 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:47:56,102 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:47:56,489 DEBUG DbLibraryStore [main] Attempting to lend ISBN 174213 to member ID 1000
+2026-03-16 17:47:56,561 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 174213) to member 1000
+2026-03-16 17:47:56,806 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:47:56,884 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:47:56,899 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:47:57,122 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:47:57,177 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:47:57,188 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:47:57,341 INFO DbLibraryStore [main] Title 'Test Book' added to database.
+2026-03-16 17:47:57,631 DEBUG DbLibraryStore [main] Attempting to lend ISBN 999999 to member ID 1000
+2026-03-16 17:47:57,699 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 999999) to member 1000
+2026-03-16 17:47:57,726 DEBUG DbLibraryStore [main] Processing return for ISBN 999999 from member 1000
+2026-03-16 17:47:57,795 INFO DbLibraryStore [main] Item 999999 successfully returned by member 1000
+2026-03-16 17:47:57,980 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:47:58,040 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:47:58,046 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:47:58,518 FATAL DbLibraryStore [main] Member 1000 deleted due to repeated violation
+2026-03-16 17:47:58,795 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:47:58,853 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:47:58,862 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:47:59,510 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 1000
+2026-03-16 17:47:59,591 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 1000
+2026-03-16 17:47:59,642 DEBUG DbLibraryStore [main] Attempting to lend ISBN 238103 to member ID 1000
+2026-03-16 17:47:59,708 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 238103) to member 1000
+2026-03-16 17:47:59,740 DEBUG DbLibraryStore [main] Attempting to lend ISBN 146123 to member ID 1000
+2026-03-16 17:47:59,804 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 146123) to member 1000
+2026-03-16 17:48:00,032 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:48:00,088 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:48:00,094 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 17:48:00,304 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1000
+2026-03-16 17:48:00,389 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
+2026-03-16 17:48:00,449 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1000
+2026-03-16 17:48:00,536 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
+2026-03-16 17:48:00,567 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1000
+2026-03-16 17:48:00,654 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
+2026-03-16 17:48:00,931 INFO DbLibraryStore [main] Initializing database, seeding data
+2026-03-16 17:48:00,996 INFO DbLibraryStore [main] Seeding initial book data...
+2026-03-16 17:48:00,998 INFO DbLibraryStore [main] Database seeding successful
+2026-03-16 18:22:08,612 DEBUG DbLibraryStore [main] Attempting to lend ISBN 102938 to member ID 1000
+2026-03-16 18:22:08,627 INFO DbLibraryStore [main] Succesfully lent item (ISBN: 102938) to member 1000
+2026-03-16 18:23:13,625 DEBUG DbLibraryStore [main] Processing return for ISBN 102938 from member 1000
+2026-03-16 18:23:13,638 INFO DbLibraryStore [main] Item 102938 successfully returned by member 1000
