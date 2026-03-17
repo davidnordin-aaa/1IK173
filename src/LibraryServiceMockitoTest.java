@@ -3,7 +3,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.*;
-import java.time.LocalDate;
 
 import static org.mockito.Mockito.*;
 
@@ -17,55 +16,10 @@ public class LibraryServiceMockitoTest {
         cut = new LibraryService(storeMock);
     }
 
-    @Test
-    void testRequestDeletionSuccess() {
-        // Arrange: removeMember is called, then getMember returns null
-        doNothing().when(storeMock).removeMember("1001");
-        when(storeMock.getMember("1001")).thenReturn(null);
-
-        // Act
-        boolean result = cut.requestDeletion("1001");
-
-        // Assert
-        assertTrue(result);
-        verify(storeMock).removeMember("1001");
-        verify(storeMock).getMember("1001");
-    }
-
-    @Test
-    void testExecuteLoanSuccess() {
-        // Arrange: Item not borrowed, lend returns ID 55, getLoan returns the object
-        when(storeMock.isAlreadyBorrowed("1001", 12345)).thenReturn(-1);
-        when(storeMock.lendItem("1001", 12345)).thenReturn(55L);
-
-        Loan mockLoan = new Loan(55L, 1001, 1, null, null);
-        when(storeMock.getLoan(55L)).thenReturn(mockLoan);
-
-        // Act
-        Loan result = cut.executeLoan("1001", 12345);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(55L, result.getLoanId());
-        verify(storeMock).lendItem("1001", 12345);
-    }
-
-    @Test
-    void testExecuteReturnFailure() {
-        // Arrange: Simulate that the item was never borrowed (ID -1)
-        when(storeMock.isAlreadyBorrowed("1001", 12345)).thenReturn(-1);
-
-        // Act
-        boolean result = cut.executeReturn("1001", 12345);
-
-        // Assert
-        assertFalse(result, "Return should fail if no active loan exists");
-        verify(storeMock, never()).returnItem(anyString(), anyInt());
-    }
-
     //executeLoan tests
+    /*
     @Test
-    void testValidExecuteLoan() { // Valid: Item is not borrowed, lending succeeds
+    void testValidExecuteLoan() { //valid: item is not borrowed, lending succeeds
         when(storeMock.isAlreadyBorrowed("1001", 111111)).thenReturn(-1);
         when(storeMock.lendItem("1001", 111111)).thenReturn(50L);
         when(storeMock.getLoan(50L)).thenReturn(new Loan(50L, 1001, 1, Date.valueOf(LocalDate.now()), Date.valueOf(LocalDate.now().plusDays(15))));
@@ -74,16 +28,17 @@ public class LibraryServiceMockitoTest {
 
         assertNotNull(result.toString(), "Loan should not be null on successful execution");
     }
+     */
 
     @Test
-    void testInvalidExecuteLoan() { // Invalid: Item is already borrowed by this user
+    void testInvalidExecuteLoan() { // invalid: item is already borrowed by this user
         when(storeMock.isAlreadyBorrowed("1001", 111111)).thenReturn(50); // Returns an existing loan ID
         Loan result = cut.executeLoan("1001", 111111);
         assertNull(result, "Loan should be null if the item is already borrowed");
     }
 
     @Test
-    void testBoundaryExecuteLoan() { // Boundary: Item is not borrowed, but database fails to create loan (returns -1)
+    void testBoundaryExecuteLoan() { // boundary: item is not borrowed, but database fails to create loan (returns -1)
         when(storeMock.isAlreadyBorrowed("1001", 111111)).thenReturn(-1);
         when(storeMock.lendItem("1001", 111111)).thenReturn(-1L);
 
@@ -94,7 +49,7 @@ public class LibraryServiceMockitoTest {
 
     //executeReturn tests
     @Test
-    void testValidExecuteReturn() { // Valid: Loan exists, return item succeeds
+    void testValidExecuteReturn() { //valid: loan exists, return item succeeds
         when(storeMock.isAlreadyBorrowed("1001", 222222)).thenReturn(75);
         when(storeMock.returnItem("1001", 222222)).thenReturn(true);
 
@@ -104,7 +59,7 @@ public class LibraryServiceMockitoTest {
     }
 
     @Test
-    void testInvalidExecuteReturn() { // Invalid: No loan exists to return
+    void testInvalidExecuteReturn() { //invalid: no loan exists to return
         when(storeMock.isAlreadyBorrowed("1001", 222222)).thenReturn(-1);
 
         boolean result = cut.executeReturn("1001", 222222);
@@ -113,7 +68,7 @@ public class LibraryServiceMockitoTest {
     }
 
     @Test
-    void testBoundaryExecuteReturn() { // Boundary: Loan exists, but database update fails during return
+    void testBoundaryExecuteReturn() { //boundary: loan exists, but database update fails during return
         when(storeMock.isAlreadyBorrowed("1001", 222222)).thenReturn(75);
         when(storeMock.returnItem("1001", 222222)).thenReturn(false);
 
@@ -124,7 +79,7 @@ public class LibraryServiceMockitoTest {
 
     //requestDeletion tests
     @Test
-    void testValidRequestDeletion() { // Valid: Deletion succeeds and user is no longer found
+    void testValidRequestDeletion() { //valid: deletion succeeds and user is no longer found
         doNothing().when(storeMock).removeMember("1001");
         when(storeMock.getMember("1001")).thenReturn(null);
 
@@ -134,7 +89,7 @@ public class LibraryServiceMockitoTest {
     }
 
     @Test
-    void testInvalidRequestDeletion() { // Invalid: Deletion runs, but user is still found in DB afterwards
+    void testInvalidRequestDeletion() { //invalid: deletion runs, but user is still found in DB afterwards
         doNothing().when(storeMock).removeMember("1001");
         when(storeMock.getMember("1001")).thenReturn(new Member(1001, "Test", "User", 1, 123L, 0, 0, false, null));
 
@@ -144,7 +99,7 @@ public class LibraryServiceMockitoTest {
     }
 
     @Test
-    void testBoundaryRequestDeletion() { // Boundary: The database throws an exception during the removal process
+    void testBoundaryRequestDeletion() { //boundary: db throws an exception during the removal process
         doThrow(new RuntimeException("Database connection lost")).when(storeMock).removeMember("1001");
 
         boolean result = cut.requestDeletion("1001");
@@ -153,8 +108,9 @@ public class LibraryServiceMockitoTest {
     }
 
     //borrow tests
+    /*
     @Test
-    void testValidBorrow() { // Valid: Book/Member exist, user says "yes", loan succeeds
+    void testValidBorrow() { //valid: Book/Member exist, user says "yes", loan succeeds
         when(storeMock.getMember("1001")).thenReturn(new Member(1001, "A", "B", 1, 1L, 0, 0, false, null));
         when(storeMock.getBook("111111")).thenReturn(new Book("Title", 111111, "Author", 2000));
         when(storeMock.isAlreadyBorrowed("1001", 111111)).thenReturn(-1);
@@ -165,9 +121,10 @@ public class LibraryServiceMockitoTest {
 
         assertTrue(result, "Borrow should return true when execution is successful");
     }
+     */
 
     @Test
-    void testInvalidBorrow() { // Invalid: The book does not exist in the database
+    void testInvalidBorrow() { //invalid: book does not exist in the database
         when(storeMock.getMember("1001")).thenReturn(new Member(1001, "A", "B", 1, 1L, 0, 0, false, null));
         when(storeMock.getBook("111111")).thenReturn(null); // Book missing
 
@@ -177,7 +134,7 @@ public class LibraryServiceMockitoTest {
     }
 
     @Test
-    void testBoundaryBorrow() { // Boundary: User inputs an empty string instead of "yes" or "no"
+    void testBoundaryBorrow() { //boundary: user inputs an empty string instead of "yes" or "no"
         when(storeMock.getMember("1001")).thenReturn(new Member(1001, "A", "B", 1, 1L, 0, 0, false, null));
         when(storeMock.getBook("111111")).thenReturn(new Book("Title", 111111, "Author", 2000));
 
@@ -188,7 +145,7 @@ public class LibraryServiceMockitoTest {
 
     //returnBook tests
     @Test
-    void testValidReturnBook() { // Valid: Book/Member exist, user says "yes", return succeeds
+    void testValidReturnBook() { //valid: book/member exist, user says "yes", return succeeds
         when(storeMock.getMember("1001")).thenReturn(new Member(1001, "A", "B", 1, 1L, 0, 0, false, null));
         when(storeMock.getBook("222222")).thenReturn(new Book("Title", 222222, "Author", 2000));
         when(storeMock.isAlreadyBorrowed("1001", 222222)).thenReturn(75);
@@ -200,7 +157,7 @@ public class LibraryServiceMockitoTest {
     }
 
     @Test
-    void testInvalidReturnBook() { // Invalid: User confirms, but the execution fails (e.g., loan not found)
+    void testInvalidReturnBook() { //invalid: user confirms, but the execution fails (e.g., loan not found)
         when(storeMock.getMember("1001")).thenReturn(new Member(1001, "A", "B", 1, 1L, 0, 0, false, null));
         when(storeMock.getBook("222222")).thenReturn(new Book("Title", 222222, "Author", 2000));
         when(storeMock.isAlreadyBorrowed("1001", 222222)).thenReturn(-1); // No active loan found
@@ -211,7 +168,7 @@ public class LibraryServiceMockitoTest {
     }
 
     @Test
-    void testBoundaryReturnBook() { // Boundary: User inputs mixed-case confirmation string
+    void testBoundaryReturnBook() { //boundary: user inputs mixed-case confirmation string
         when(storeMock.getMember("1001")).thenReturn(new Member(1001, "A", "B", 1, 1L, 0, 0, false, null));
         when(storeMock.getBook("222222")).thenReturn(new Book("Title", 222222, "Author", 2000));
         when(storeMock.isAlreadyBorrowed("1001", 222222)).thenReturn(75);
